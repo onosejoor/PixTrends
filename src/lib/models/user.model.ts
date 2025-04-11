@@ -1,4 +1,7 @@
+import bcrypt from "bcryptjs";
 import mongoose, { Model, model, Schema, Types } from "mongoose";
+
+const GOOGLE_CODE = process.env.GOOGLE_CODE;
 
 interface IUser {
   name: string;
@@ -22,7 +25,13 @@ const userSchema = new Schema<IUser>(
         "http://res.cloudinary.com/dog3ihaqs/image/upload/v1741877054/mq56g3xeifvoe7rhtnmz.jpg",
       required: false,
     },
-    username: { type: String, required: true, unique: true, sparse: true },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      sparse: true,
+    },
     folowers: [{ type: Types.ObjectId, ref: "User" }],
     following: [{ type: Types.ObjectId, ref: "User" }],
   },
@@ -30,6 +39,19 @@ const userSchema = new Schema<IUser>(
     timestamps: true,
   },
 );
+
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password") || this.password === GOOGLE_CODE) {
+    return next();
+  }
+
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(this.password, saltRounds);
+
+  this.password = hashedPassword;
+
+  return next();
+});
 
 userSchema.index({ email: 1, username: 1 });
 

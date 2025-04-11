@@ -10,17 +10,24 @@
   },
   "dependencies": {
     "@types/nodemailer": "^6.4.17",
+    "@types/otp-generator": "^4.0.2",
     "axios": "^1.8.4",
+    "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",
+    "jose": "^6.0.10",
     "mongodb": "^6.15.0",
     "mongoose": "^8.13.2",
     "next": "15.2.5",
+    "next-auth": "^5.0.0-beta.25",
     "nextjs-toploader": "^3.8.16",
     "nodemailer": "^6.10.0",
+    "otp-generator": "^4.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "server-only": "^0.0.1",
     "swr": "^2.3.3",
-    "tailwind-merge": "^3.2.0"
+    "tailwind-merge": "^3.2.0",
+    "worker-timers": "^8.0.20"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -33,6 +40,7 @@
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^4",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "^5"
   }
 }

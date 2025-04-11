@@ -9,7 +9,7 @@ interface IOtp {
 const otpSchema = new Schema<IOtp>(
   {
     email: { type: String, required: true, unique: true, expires: "5m" },
-    otp: [{ type: String, required: true }],
+    otp: { type: String, required: true },
   },
   {
     timestamps: true,

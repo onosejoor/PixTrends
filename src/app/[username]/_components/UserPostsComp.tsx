@@ -3,17 +3,18 @@
 import { CommentIcon, HeartIcon } from "@/components/Icons";
 import Img from "@/components/Img";
 import PostLoader from "@/components/loaders/PostLoader";
+import axios from "axios";
 import useSWR from "swr";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 type Post = {
   user: string;
+  createdAt: string;
   content: string;
   images: string[];
-  likes: string[];
+  likes: number;
   comments: number;
-  createdAt: string;
 };
 
 type APIResponse = {
@@ -21,25 +22,30 @@ type APIResponse = {
   posts: Post[];
 };
 
-export default function HomePagePosts() {
-  const { data, error, isLoading } = useSWR<APIResponse>("/api/posts", fetcher);
+export default function UserPosts({ username }: { username: string }) {
+  const { data, isLoading, error } = useSWR<APIResponse>(
+    `/api/users/${username}/posts`,
+    fetcher,
+  );
 
-  if (error) return <div>Failed to load</div>;
-  if (isLoading)
-    return (
-      <section className="divide-accent divide-y">
-        <PostLoader />
-      </section>
-    );
+  if (error) {
+    return <p>error getting posts</p>;
+  }
+
+  if (isLoading) {
+    return <PostLoader />;
+  }
 
   const { posts } = data!;
 
   return (
-    <section className="divide-accent divide-y">
-      {posts.map((post, index) => (
-        <PostCards key={index} post={post} />
-      ))}
-    </section>
+    <div className="divide-accent divide-y">
+      {posts.length ? (
+        posts.map((post, index) => <PostCards key={index} post={post} />)
+      ) : (
+        <p>404</p>
+      )}
+    </div>
   );
 }
 
@@ -49,7 +55,7 @@ const PostCards = ({ post }: { post: Post }) => {
   const truncateText = images.length ? `${content.slice(0, 200)}...` : content;
   return (
     <article className="sm:p-10">
-      <div className="sm:shadow-post-card shadow-light-gray/50 sm:rounded-[10px] grid h-fit w-full gap-6 bg-white p-5 shadow-none md:max-w-[700px]">
+      <div className="sm:shadow-post-card shadow-light-gray/50 grid h-fit w-full gap-6 bg-white p-5 shadow-none sm:rounded-[10px] md:max-w-[700px]">
         <div className="flex items-start gap-5">
           <Img
             src={"/images/chal.png"}
