@@ -1,13 +1,51 @@
-import { cx } from "@/components/utils";
-import { backgrounds } from "./_components/bg-gradients";
-import Img from "@/components/Img";
 import UserPosts from "./_components/UserPostsComp";
 import { User } from "@/lib/models";
 import { notFound } from "next/navigation";
+import UserHeader from "./_components/UserHeader";
+import { veryfySession } from "@/lib/actions/session";
 
 type Params = {
   params: Promise<{ username: string }>;
 };
+
+type Status =
+  | "unauthenticated"
+  | "self"
+  | "following"
+  | "notFollowing"
+  | "error";
+
+async function checkIsUser(
+  username: string,
+  user: IUser,
+): Promise<{ status: Status }> {
+  try {
+    const { isAuth, username: authUsername, userId } = await veryfySession();
+
+    if (!isAuth) {
+      return { status: "unauthenticated" };
+    }
+
+    if (username === authUsername) {
+      return { status: "self" };
+    }
+
+    const isFollowing = user?.folowers.some((uid) => uid === userId);
+
+    switch (isFollowing) {
+      case true:
+        return { status: "following" };
+      case false:
+        return { status: "notFollowing" };
+
+      default:
+        return { status: "notFollowing" };
+    }
+  } catch (error) {
+    console.log("[CHECK_IS_USER_ERROR]: ", error);
+    return { status: "error" };
+  }
+}
 
 export default async function UserPage({ params }: Params) {
   const username = (await params).username;
@@ -18,57 +56,13 @@ export default async function UserPage({ params }: Params) {
     return notFound();
   }
 
-  const randomNumber = Math.ceil(Math.random() * 20);
+  const { status } = await checkIsUser(username, checkUser);
 
   return (
     <div className="grid gap-10">
-      <section>
-      <div
-        className={cx(
-          "opacity/70 h-37.5 w-full sm:h-[200px]",
-          backgrounds[randomNumber].class ??
-            "bg-[#cc5500]/20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDIiPjwvcmVjdD4KPC9zdmc+')]",
-        )}
-      ></div>
-      <header className="-mt-15 grid h-fit gap-10 px-7.5 sm:px-10">
-        <div className="flex items-end gap-5">
-          <Img
-            src={"/images/chal.png"}
-            alt="user"
-            className="border-accent h-37.5 w-37.5 rounded-full border-2"
-          />
-          <button className="bg-primary h-fit rounded-full p-2 px-5 text-white">
-            Follow
-          </button>
-        </div>
+      <UserHeader username={username} status={status} />
 
-        <div className="*:mb-5">
-          <div className="flex gap-5">
-            <div className="grid gap-2">
-              <b className="text-primary text-lg">Onos Ejoor</b>
-              <p className="text-secondary text-sm font-medium">@Devtext16</p>
-            </div>
-            <div className="grid justify-items-center gap-2">
-              <b className="text-primary text-lg">0</b>
-              <p className="text-secondary font-medium">Followers</p>
-            </div>
-            <div className="grid justify-items-center gap-2">
-              <b className="text-primary text-lg">10</b>
-              <p className="text-secondary font-medium">Following</p>
-            </div>
-          </div>
-
-          <p className="text-gray">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Illo est
-            animi cupiditate! Asperiores expedita aut rem officia incidunt quos
-            commodi iusto aspernatur quae et quo minus dolore, porro distinctio
-            alias.
-          </p>
-        </div>
-      </header>        
-      </section>
-
-      <UserPosts username={username} />
+      <UserPosts username={username} isUser={status === "self"} />
     </div>
   );
 }

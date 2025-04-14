@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { CancelIcon, CheckedIcon, ErrorIcon } from "@/components/Icons";
 import { cx } from "@/components/utils";
@@ -34,7 +34,6 @@ const Toast: React.FC = () => {
 
   const { message, variants } = toast.info || {};
   const duration = 5000;
-
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const clearTimer = useCallback(() => {
@@ -92,7 +91,7 @@ const Toast: React.FC = () => {
     <div
       className={cx(
         userVariants,
-        "group shadow-post-card shadow-light-gray animate-in slide-in-from-top fixed top-1.5 bottom-auto left-1/2 z-[100] flex -translate-x-1/2 translate-y-0 items-center justify-between gap-2 rounded-[12px] px-6 py-4 transition-transform sm:!w-fit sm:!max-w-[500px]",
+        "group shadow-post-card shadow-light-gray animate-in slide-in-from-top fixed top-1.5 bottom-auto left-1/2 z-[100] flex w-full max-w-[calc(100%-20px)] -translate-x-1/2 translate-y-0 items-start justify-start gap-2 rounded-[12px] px-6 py-4 transition-transform sm:!w-fit xs:max-w-[400px]",
       )}
     >
       <div>{variants === "success" ? <CheckedIcon /> : <ErrorIcon />}</div>

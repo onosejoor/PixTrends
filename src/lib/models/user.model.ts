@@ -8,6 +8,7 @@ interface IUser {
   email: string;
   password: string;
   avatar: string;
+  bio: string;
   username: string;
   folowers: Types.ObjectId[];
   following: Types.ObjectId[];
@@ -32,6 +33,7 @@ const userSchema = new Schema<IUser>(
       trim: true,
       sparse: true,
     },
+    bio: { type: String, required: false, default: "" },
     folowers: [{ type: Types.ObjectId, ref: "User" }],
     following: [{ type: Types.ObjectId, ref: "User" }],
   },

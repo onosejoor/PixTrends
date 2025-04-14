@@ -1,5 +1,12 @@
 export default function PostLoader() {
-  return [...Array(10)].map((_, index) => <LoaderCard key={index} />);
+  return (
+    <div className="grid gap-10">
+      <h2 className="text-primary text-xl px-5 sm:px-10 font-bold">Posts</h2>
+      {[...Array(10)].map((_, index) => (
+        <LoaderCard key={index} />
+      ))}
+    </div>
+  );
 }
 
 const LoaderCard = () => (
@@ -15,13 +22,16 @@ const LoaderCard = () => (
 
       <div className="flex flex-col gap-1">
         {[...Array(3)].map((_, index) => (
-          <p key={index} className="bg-light-gray rounded-full h-5 w-full animate-pulse"></p>
+          <p
+            key={index}
+            className="bg-light-gray h-5 w-full animate-pulse rounded-full"
+          ></p>
         ))}
       </div>
 
       <div className="no-scrollbar flex h-[250px] gap-5 overflow-x-scroll">
-        <picture className="h-full w-[200px] shrink-0 animate-pulse bg-light-gray rounded-[10px]"></picture>
-        <picture className="h-full w-[200px] shrink-0 animate-pulse bg-light-gray rounded-[10px]"></picture>
+        <picture className="bg-light-gray h-full w-[200px] shrink-0 animate-pulse rounded-[10px]"></picture>
+        <picture className="bg-light-gray h-full w-[200px] shrink-0 animate-pulse rounded-[10px]"></picture>
       </div>
     </div>
   </article>

@@ -131,6 +131,24 @@ export const CreateIcon = () => (
   </svg>
 );
 
+export const EmptyStateIcon = () => (
+  <svg
+    width="80"
+    height="80"
+    viewBox="0 0 80 80"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M20 15H15V20M60 15H65V20M65 60V65H60M15 60V65H20"
+      stroke="#6e6e6e"
+      strokeWidth="5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 export const ErrorIcon = () => (
   <svg
     viewBox="0 0 16 16"

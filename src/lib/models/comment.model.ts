@@ -8,9 +8,9 @@ interface IComment {
 
 const commentSchema = new Schema<IComment>(
   {
-    user: { type: Schema.Types.ObjectId, required: true },
-    content: { type: String, required: false, default: "" },
-    post: [{ type: Schema.Types.ObjectId, required: true }],
+    user: { type: Schema.Types.ObjectId, required: true, ref: "User" },
+    content: { type: String, required: true },
+    post: [{ type: Schema.Types.ObjectId, required: true, ref: "Post" }],
   },
   {
     timestamps: true,
@@ -19,7 +19,7 @@ const commentSchema = new Schema<IComment>(
 
 commentSchema.index({ post: 1, user: 1 });
 
-const Post: Model<IComment> =
-  mongoose.models?.Post || model<IComment>("Post", commentSchema);
+const Comment: Model<IComment> =
+  mongoose.models?.Comment || model<IComment>("Comment", commentSchema);
 
-export default Post;
+export default Comment;

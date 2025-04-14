@@ -7,11 +7,9 @@ const nextConfig: NextConfig = {
   },
   images: {
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "res.cloudinary.com",
-      },
-      { protocol: "https", hostname: "lh3.googleusercontent.com" },
+      new URL("https://res.cloudinary.com/dog3ihaqs/image/upload/**"),
+      new URL("http://res.cloudinary.com/dog3ihaqs/image/upload/**"),
+      new URL("https://lh3.googleusercontent.com/a/**"),
     ],
   },
 };

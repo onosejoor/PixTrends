@@ -9,6 +9,7 @@ declare global {
     email: string;
     password: string;
     avatar: string;
+    bio: string;
     username: string;
     folowers: Types.ObjectId[];
     following: Types.ObjectId[];
@@ -17,7 +18,7 @@ declare global {
 
   interface IPost {
     _id: Types.ObjectId;
-    user: Types.ObjectId;
+    user: IUser;
     content: string;
     images: string[];
     likes: Types.ObjectId[];
@@ -27,8 +28,8 @@ declare global {
 
   interface IComment {
     _id: Types.ObjectId;
-    post: Types.ObjectId;
-    user: Types.ObjectId;
+    post: IPost;
+    user: IUser;
     content: string;
     createdAt: Date;
   }

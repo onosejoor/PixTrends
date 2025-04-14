@@ -11,11 +11,18 @@ interface IPost {
 
 const postSchema = new Schema<IPost>(
   {
-    user: { type: Schema.Types.ObjectId, required: true },
+    user: { type: Schema.Types.ObjectId, required: true, ref: "User" },
     content: { type: String, required: false, default: "" },
     comments: { type: Number, required: false, default: 0 },
     images: { type: [String], required: false, default: [] },
-    likes: [{ type: Schema.Types.ObjectId, required: false, default: [] }],
+    likes: [
+      {
+        type: Schema.Types.ObjectId,
+        required: false,
+        default: [],
+        ref: "User",
+      },
+    ],
   },
   {
     timestamps: true,
