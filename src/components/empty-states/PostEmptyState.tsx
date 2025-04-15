@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PiPlusCircleFill } from "react-icons/pi";
-import { EmptyStateIcon } from "./Icons";
+import { EmptyStateIcon } from "../Icons";
 
 interface EmptyStateProps {
   isUser?: boolean;

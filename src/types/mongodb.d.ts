@@ -31,6 +31,8 @@ declare global {
     post: IPost;
     user: IUser;
     content: string;
+    replies: IComment[];
+    parentId?: Types.ObjectId;
     createdAt: Date;
   }
 
