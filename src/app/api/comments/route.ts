@@ -1,11 +1,14 @@
 import { veryfySession } from "@/lib/actions/session";
 import { Comment, Post } from "@/lib/models";
+import { startSession } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
 
   const postId = searchParams.get("postId");
+
+  const selectedFields = ["name", "avatar", "username", "_id"];
 
   if (!postId) {
     return NextResponse.json(
@@ -28,9 +31,13 @@ export async function GET(req: NextRequest) {
       .populate([
         {
           path: "replies",
+          populate: {
+            path: "user",
+            select: selectedFields,
+          },
           options: { sort: { createdAt: 1 } },
         },
-        { path: "user", select: ["-password", "-email"] },
+        { path: "user", select: selectedFields },
       ])
       .sort({ createdAt: -1 });
 
@@ -42,16 +49,17 @@ export async function GET(req: NextRequest) {
       { status: 500 },
     );
   }
-};
+}
 
 export async function POST(req: NextRequest) {
+  const session = await startSession();
   try {
-    const { commentText, postId, parentId } = (await req.json()) as {
-      commentText: string;
+    const { text, postId, parentId } = (await req.json()) as {
+      text: string;
       postId: string;
       parentId: string | null;
     };
-    
+
     const { isAuth, userId } = await veryfySession();
 
     if (!isAuth) {
@@ -61,7 +69,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!commentText) {
+    if (!text) {
       return NextResponse.json(
         { success: false, message: "No comment text provided" },
         { status: 400 },
@@ -77,18 +85,32 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await Comment.create({
-      user: userId,
-      content: commentText,
-      post: postId,
-      ...(parentId && { parentId }),
-    });
+    session.startTransaction();
+    await Comment.create(
+      [
+        {
+          user: userId,
+          content: text,
+          post: postId,
+          ...(parentId && { parentId }),
+        },
+      ],
+      { session },
+    );
+
+    await getPost.updateOne({ $inc: { comments: 1 } }, { session });
+
+    await session.commitTransaction();
+    session.endSession();
 
     return NextResponse.json(
       { success: true, message: "Comment created " },
       { status: 200 },
     );
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+
     console.log("[POST_COMMENT_ERROR]: ", error);
 
     return NextResponse.json(

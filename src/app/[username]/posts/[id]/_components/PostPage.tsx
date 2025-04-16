@@ -75,7 +75,12 @@ const DynamicPostCard = ({ post, userId }: Props) => {
           {content}
         </p>
         {images.length > 0 && (
-          <div className="no-scrollbar flex h-125 gap-5 overflow-x-scroll">
+          <div
+            className={cx(
+              "no-scrollbar flex h-125 gap-5 overflow-x-scroll",
+              images.length > 1 && "h-75",
+            )}
+          >
             {images.map((image, index) => (
               <picture
                 key={index}
@@ -88,7 +93,7 @@ const DynamicPostCard = ({ post, userId }: Props) => {
               >
                 <Img
                   src={image}
-                  className="h-full w-full rounded-[10px] object-cover"
+                  className="rounded-[10px] object-cover size-full"
                   alt={`img-${index}`}
                 />
               </picture>
@@ -106,7 +111,7 @@ const DynamicPostCard = ({ post, userId }: Props) => {
         />
         <hr className="border-light-gray" />
       </div>
-      <CommentSection postId={_id.toString()} />
+      <CommentSection postId={_id.toString()} user={post.user} />
     </article>
   );
 };
