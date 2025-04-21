@@ -1,4 +1,5 @@
 import { veryfySession } from "@/lib/actions/session";
+import { Notification } from "@/lib/models";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -12,8 +13,13 @@ export async function GET() {
       );
     }
 
+    const unreadNotifications = await Notification.countDocuments({
+      reciever: userId,
+      isRead: false,
+    });
+
     return NextResponse.json(
-      { success: true, userId, username },
+      { success: true, userId, username, unreadNotifications },
       { status: 200 },
     );
   } catch (error) {

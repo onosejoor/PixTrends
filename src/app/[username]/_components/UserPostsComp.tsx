@@ -6,7 +6,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import useSWR from "swr";
 import relativeTime from "dayjs/plugin/relativeTime";
-import PostCards from "./PostCards";
+import PostCards from "../../_components/posts/PostCards";
 
 dayjs.extend(relativeTime);
 

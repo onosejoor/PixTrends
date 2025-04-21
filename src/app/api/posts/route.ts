@@ -1,10 +1,10 @@
-import { posts } from "@/dummy";
 import { veryfySession } from "@/lib/actions/session";
 import { Post } from "@/lib/models";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
+    const { userId } = await veryfySession();
     const searchParams = req.nextUrl.searchParams;
 
     const { page, limit } = Object.fromEntries(searchParams.entries()) as {
@@ -15,9 +15,13 @@ export async function GET(req: NextRequest) {
     const nextPage = Number(page) || 1;
     const limitValue = Number(limit) || 10;
 
-    const getPost = posts.slice((nextPage - 1) * limitValue, limitValue);
+    const getPost = await Post.find({})
+      .populate("user", ["-password", "-email"])
+      .limit(limitValue)
+      .sort({ createdAt: -1 })
+      .skip((nextPage - 1) * limitValue);
 
-    return NextResponse.json({ success: true, posts: getPost });
+    return NextResponse.json({ success: true, posts: getPost, userId });
   } catch (error) {
     console.log("[GET_HOME_POSTS_ERROR]:", error);
 

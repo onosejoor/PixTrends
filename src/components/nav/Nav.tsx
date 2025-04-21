@@ -1,16 +1,16 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { HomeIcon, SearchIcon } from "./Icons";
-import Img from "./Img";
+import { HomeIcon, SearchIcon } from "../Icons";
+import Img from "../Img";
 import Link from "next/link";
 
 export default function Nav({ children }: { children: React.ReactNode }) {
   const path = usePathname();
 
   const navItems = [
-    { name: "Home", href: "/", icon: <HomeIcon /> },
-    { name: "Discover", href: "/discover", icon: <SearchIcon /> },
+    { name: "For You", href: "/", icon: <HomeIcon /> },
+    { name: "Following", href: "/discover", icon: <SearchIcon /> },
   ];
 
   return (

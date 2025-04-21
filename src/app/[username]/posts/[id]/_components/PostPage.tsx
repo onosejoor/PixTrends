@@ -1,7 +1,7 @@
 "use client";
 
 import LikeSection from "@/app/[username]/_components/LikeSection";
-import CommentSection from "@/app/_components/Comment";
+import CommentSection from "@/app/_components/comments/Comment";
 import Img from "@/components/Img";
 import DynamicPostLoader from "@/components/loaders/DynamicPostLoader";
 import { cx } from "@/components/utils";
@@ -71,7 +71,7 @@ const DynamicPostCard = ({ post, userId }: Props) => {
             <p className="text-accent text-base font-medium">@{username}</p>
           </div>
         </div>
-        <p className="text-secondary text-lg whitespace-break-spaces">
+        <p className="text-secondary sm:text-lg whitespace-break-spaces">
           {content}
         </p>
         {images.length > 0 && (

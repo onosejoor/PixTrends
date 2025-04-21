@@ -35,6 +35,8 @@ button {
   --breakpoint-xsm: 550px;
 
   --shadow-post-card: 0 0 10px 5px var(--gray);
+  --shadow-avatar: 0 0 10px 5px var(--foreground);
+
 
   --animate-scale: scale 0.9s ease-in-out infinite;
 

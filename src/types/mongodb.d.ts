@@ -42,4 +42,15 @@ declare global {
     otp: string;
     createdAt: Date;
   }
+
+  interface INotification {
+    _id: Types.ObjectId;
+    createdAt: Date;
+    sender: Omit<IUser, "password" | "email">;
+    reciever: Omit<IUser, "password" | "email">;
+    message: string;
+    type: "like" | "follow" | "reply";
+    postId: string | null;
+    isRead: boolean;
+  }
 }

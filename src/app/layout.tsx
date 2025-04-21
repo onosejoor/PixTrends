@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
-import Nav from "@/components/Nav";
+import Nav from "@/components/nav/Nav";
 import { RecentPosts } from "./_components/RecentPosts";
-import UserNavComp from "@/components/UserNav";
+import UserNavComp from "@/components/nav/UserNav";
 import { Toast } from "@/hooks/useToast";
 
 const geistSans = Geist({

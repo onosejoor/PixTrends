@@ -2,14 +2,14 @@
 
 import axios from "axios";
 import useSWR from "swr";
-import Spinner from "./loaders/Spinner";
+import Spinner from "../loaders/Spinner";
 import {
   CreateIcon,
   NotificationIcon,
   ProfileIcon,
   SignInIcon,
   SignUpIcon,
-} from "./Icons";
+} from "../Icons";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
@@ -20,6 +20,7 @@ type ApiResponse = {
   message?: string;
   userId?: string;
   username: string;
+  unreadNotifications: number;
 };
 
 export default function UserNavComp() {
@@ -28,10 +29,11 @@ export default function UserNavComp() {
     fetcher,
   );
   const path = usePathname();
+  const notificationActive = "/notifications" === path;
 
   if (error) {
     console.log(error);
-    
+
     if (error.status === 401) {
       return <AuthLinks path={path} />;
     }
@@ -42,15 +44,11 @@ export default function UserNavComp() {
     return <Spinner />;
   }
 
-  const { username } = data!;
+  const { username, unreadNotifications } = data!;
 
   const userLinks = [
     { name: "Create", href: "/create", icon: <CreateIcon /> },
-    {
-      name: "Notifications",
-      href: "/notifications",
-      icon: <NotificationIcon />,
-    },
+
     { name: "Profile", href: `/${username}`, icon: <ProfileIcon /> },
   ];
 
@@ -78,11 +76,38 @@ export default function UserNavComp() {
           </li>
         );
       })}
+      <li
+        data-active={notificationActive}
+        className="group xsm:data-[active=true]:bg-accent xsm:hover:bg-accent/10 rounded-[10px]"
+      >
+        <Link
+          href={"/notifications"}
+          className="xsm:p-2 flex items-center sm:gap-3"
+        >
+          <div className="grid justify-items-center gap-1.5">
+            <div className="relative">
+              <NotificationIcon />
+              {unreadNotifications > 0 && (
+                <span className="bg-accent absolute group-data-[active=true]:bg-blue-400 top-[5px] right-[5px] flex h-[10px] w-[10px] items-center justify-center rounded-full text-white">
+                  &nbsp;
+                </span>
+              )}
+            </div>
+
+            {notificationActive && (
+              <div className="bg-accent xsm:hidden block h-1 w-1 rounded-full"></div>
+            )}
+          </div>
+          <span className="group-data-[active=true]:text-foreground text-gray hidden font-medium md:block">
+            Notifications
+          </span>
+        </Link>
+      </li>
     </>
   );
 }
 
-const AuthLinks = ({path}: {path: string}) => {
+const AuthLinks = ({ path }: { path: string }) => {
   const authLinks = [
     { name: "Signin", href: "/signin", icon: <SignInIcon /> },
     { name: "Signup", href: "/signup", icon: <SignUpIcon /> },

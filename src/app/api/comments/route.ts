@@ -98,7 +98,9 @@ export async function POST(req: NextRequest) {
       { session },
     );
 
-    await getPost.updateOne({ $inc: { comments: 1 } }, { session });
+    if (!parentId) {
+      await getPost.updateOne({ $inc: { comments: 1 } }, { session });
+    }
 
     await session.commitTransaction();
     session.endSession();
