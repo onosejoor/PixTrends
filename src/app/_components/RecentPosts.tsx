@@ -2,14 +2,6 @@
 
 import Img from "@/components/Img";
 import { usePathname } from "next/navigation";
-
-type Post = {
-  user: string;
-  content: string;
-  images: string[];
-  createdAt: string;
-};
-
 export function RecentPosts() {
   const path = usePathname();
 

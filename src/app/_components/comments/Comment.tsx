@@ -92,14 +92,13 @@ const CommentCards = ({
 }: CardProps) => {
   const isReplying = replyingTo === comment._id.toString();
   return (
-    <div className="flex gap-4 py-5">
-      <Img
-        className="size-10 rounded-full"
-        src={"/images/chal.png"}
-        alt={`${comment.user.name}'s avatar`}
-      />
-
-      <div className="flex-1 space-y-2">
+    <div className="flex flex-col gap-4 py-5">
+      <div className="flex items-center gap-4">
+        <Img
+          className="size-10 rounded-full"
+          src={"/images/chal.png"}
+          alt={`${comment.user.name}'s avatar`}
+        />
         <div className="flex items-start justify-between">
           <div>
             <span className="text-primary font-medium">
@@ -110,20 +109,24 @@ const CommentCards = ({
             </span>
           </div>
         </div>
+      </div>
 
-        <p className="text-secondary text-base">{comment.content}</p>
+      <div className="flex-1 space-y-2">
+        <p className="text-secondary text-sm xsm:text-base">{comment.content}</p>
 
         <div className="text-gray flex items-center gap-4 pt-1 text-sm">
           <span>{dayjs(comment.createdAt).fromNow()}</span>
           <div className="flex items-center gap-1">
             <Heart className="h-3.5 w-3.5" />
-            {/* <span>{comment.likes}</span> */}
           </div>
+
           <button
-            onClick={() => setReplyingAction(comment._id.toString())}
+            onClick={() =>
+              setReplyingAction(isReplying ? "" : comment._id.toString())
+            }
             className="hover:bg-light-gray/50 h-6 rounded-sm px-2 text-sm"
           >
-            Reply
+            {isReplying ? "Hide" : "Reply"}
           </button>
         </div>
         {isReplying && (
@@ -136,12 +139,9 @@ const CommentCards = ({
         )}
 
         {comment.replies.length > 0 && (
-          <div className="mt-3 space-y-3 pt-2 pl-6">
+          <div className="divide-light-gray border-light-gray pl-0 xsm:mt-3 space-y-3 divide-y border-l pt-2 xsm:pl-3 md:pl-6">
             {comment.replies.map((reply) => (
-              <div
-                key={reply._id.toString()}
-                className="flex gap-4 border-b pb-6 last:border-0"
-              >
+              <div key={reply._id.toString()} className="flex gap-4 py-5 px-5">
                 <Img
                   className="size-10 rounded-full"
                   src={"/images/chal.png"}
@@ -163,7 +163,7 @@ const CommentCards = ({
                   <p className="text-secondary text-sm">{reply.content}</p>
 
                   <div className="text-gray flex items-center gap-4 pt-1 text-xs">
-                    <span>{dayjs(reply.createdAt).fromNow(true)}</span>
+                    <span>{dayjs(reply.createdAt).fromNow()}</span>
                     <div className="flex items-center gap-1">
                       <Heart className="h-3.5 w-3.5" />
                       {/* <span>{reply.likes}</span> */}

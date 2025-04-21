@@ -13,17 +13,19 @@ type ServerResponse = {
   message: string;
 };
 
+type CommentProps = {
+  parentId?: string | null;
+  postId: string;
+  user: IUser;
+  reply?: boolean;
+};
+
 export default function CommentForm({
   parentId,
   postId,
   user,
   reply,
-}: {
-  parentId?: string | null;
-  postId: string;
-  user: IUser;
-  reply?: boolean;
-}) {
+}: CommentProps) {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -37,7 +39,7 @@ export default function CommentForm({
     if (reply) {
       return await handleSubmit(e);
     }
-    return await handleEdit(e)
+    return await handleEdit(e);
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -116,14 +118,16 @@ export default function CommentForm({
           alt={`${username} - avatar`}
         />
         <div className="flex-1">
-          <TextAreaAutoRezise
-            minRows={4}
-            maxRows={7}
-            placeholder="Add a comment..."
-            className="border-light-gray text-secondary focus:ring-accent mb-2 w-full resize-none rounded-[10px] border p-3 ring ring-transparent outline-none"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-          />
+          <div className="border-light-gray has-focus:ring-accent flex-1 overflow-hidden rounded-[10px] border ring ring-transparent">
+            <TextAreaAutoRezise
+              minRows={4}
+              maxRows={7}
+              placeholder="Add a comment..."
+              className="text-secondary mb-2 h-full w-full resize-none border border-none p-3 outline-none"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+            />
+          </div>
           <div className="flex items-center gap-5 py-3">
             <button
               className="bg-primary flex items-center gap-2 rounded-[10px] p-2 px-3 text-sm text-white disabled:opacity-50"
