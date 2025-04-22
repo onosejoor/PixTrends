@@ -33,7 +33,6 @@ export async function likePost(postId: string) {
         reciever: findPost.user._id.toString(),
         message: `${username} liked your post!`,
         type: "like",
-        postId
       });
     }
 

@@ -2,6 +2,7 @@
 
 import { Notification } from "../models";
 import { veryfySession } from "./session";
+import { onlineUsers } from "@/app/api/notifications/stream/online_users";
 
 type NotificationProps = {
   reciever: string;
@@ -18,6 +19,7 @@ export async function sendNotification({
 }: NotificationProps) {
   try {
     const { userId } = await veryfySession();
+
     const notification = new Notification({
       reciever,
       sender: userId,
@@ -28,7 +30,14 @@ export async function sendNotification({
 
     await notification.save();
 
-    return { success: true, message: "notification sent" };
+    const controller = onlineUsers.get(reciever);
+    console.log(controller, onlineUsers, reciever);
+    
+    if (controller) {
+      controller.enqueue(`data: ${JSON.stringify(notification)}\n\n`);
+    }
+
+    return { success: true, message: "Notification sent" };
   } catch (error) {
     console.log("[SEND_NOTIFICATION_ERROR]: ", error);
 

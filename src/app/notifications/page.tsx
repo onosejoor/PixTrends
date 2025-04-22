@@ -5,8 +5,9 @@ import Img from "@/components/Img";
 import axios from "axios";
 import { LucideHeart, ReplyAll } from "lucide-react";
 import { MdPersonAdd } from "react-icons/md";
+import { useEffect, useState } from "react";
 
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -21,6 +22,32 @@ export default function NotificationsPage() {
     fetcher,
   );
 
+  const [notifications, setNotifications] = useState<INotification[]>([]);
+
+  useEffect(() => {
+    if (data) {
+      setNotifications(data.notifications);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    const eventSource = new EventSource("/api/notifications/stream");
+
+    eventSource.onmessage = (event) => {
+      const newNotification: INotification = JSON.parse(event.data);
+      setNotifications((prev) => [newNotification, ...prev]);
+    };
+
+    eventSource.onerror = () => {
+      console.error("Error with SSE connection.");
+      eventSource.close();
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, []);
+
   if (error) {
     return <p>error...</p>;
   }
@@ -28,10 +55,6 @@ export default function NotificationsPage() {
   if (isLoading) {
     return <p>loading...</p>;
   }
-
-  const { notifications } = data!;
-
-  mutate("/api/users/me");
 
   return (
     <div className="bg-foreground">

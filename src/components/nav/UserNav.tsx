@@ -12,6 +12,8 @@ import {
 } from "../Icons";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { eventEmitter } from "@/lib/eventEmitter";
 
 const fetcher = async (url: string) => axios.get(url).then((res) => res.data);
 
@@ -28,8 +30,24 @@ export default function UserNavComp() {
     "/api/users/me",
     fetcher,
   );
+  const [notificationCount, setNotificationCount] = useState(0);
+
   const path = usePathname();
   const notificationActive = "/notifications" === path;
+
+
+  useEffect(() => {
+    const listener = (data: { message: string }) => {
+      console.log(data.message);
+      setNotificationCount((prev) => prev + 1);
+    };
+
+    eventEmitter.on("notification", listener);
+
+    return () => {
+      eventEmitter.off("notification", listener);
+    };
+  }, []);
 
   if (error) {
     console.log(error);
@@ -45,6 +63,8 @@ export default function UserNavComp() {
   }
 
   const { username, unreadNotifications } = data!;
+
+  const isUnread = unreadNotifications > 0 || notificationCount > 0
 
   const userLinks = [
     { name: "Create", href: "/create", icon: <CreateIcon /> },
@@ -87,8 +107,8 @@ export default function UserNavComp() {
           <div className="grid justify-items-center gap-1.5">
             <div className="relative">
               <NotificationIcon />
-              {unreadNotifications > 0 && (
-                <span className="bg-accent absolute group-data-[active=true]:bg-blue-400 top-[5px] right-[5px] flex h-[10px] w-[10px] items-center justify-center rounded-full text-white">
+              {isUnread && (
+                <span className="bg-accent absolute top-[5px] right-[5px] flex h-[10px] w-[10px] items-center justify-center rounded-full text-white group-data-[active=true]:bg-blue-400">
                   &nbsp;
                 </span>
               )}

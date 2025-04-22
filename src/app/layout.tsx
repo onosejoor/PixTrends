@@ -5,6 +5,7 @@ import Nav from "@/components/nav/Nav";
 import { RecentPosts } from "./_components/RecentPosts";
 import UserNavComp from "@/components/nav/UserNav";
 import { Toast } from "@/hooks/useToast";
+import NotificationHandler from "@/components/NotificationHandler";
 
 const geistSans = Geist({
   variable: "--font-geist",
@@ -64,6 +65,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} font-geist bg-foreground overflow-x-hidden antialiased`}
       >
+        <NotificationHandler />
         <Nav>
           <UserNavComp />
         </Nav>
@@ -75,6 +77,7 @@ export default function RootLayout({
           <RecentPosts />
         </div>
         <footer className="mb-25"></footer>
+
         <Toast />
       </body>
     </html>
