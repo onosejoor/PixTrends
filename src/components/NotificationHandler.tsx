@@ -1,12 +1,8 @@
 "use client";
 
-import { showToast } from "@/hooks/useToast";
+import { eventEmitter } from "@/lib/eventEmitter";
 import { useEffect } from "react";
 import { mutate } from "swr";
-
-import { EventEmitter } from "events";
-
-export const eventEmitter = new EventEmitter();
 
 export const showNotification = () => {
   eventEmitter.emit("notification", { message: "New notification received!" });
@@ -17,19 +13,13 @@ export default function NotificationHandler() {
     const connectToSSE = () => {
       const eventSource = new EventSource(`/api/notifications/stream`);
 
-      eventSource.onmessage = (event) => {
-        const data = JSON.parse(event.data);
+      eventSource.onmessage = () => {
         const isOnNotificationsPage =
           window.location.pathname === "/notifications";
 
         if (isOnNotificationsPage) {
           mutate("/api/notifications");
         }
-
-        showToast({
-          message: data.message || "New notification received!",
-          variants: "success",
-        });
 
         showNotification(); 
       };

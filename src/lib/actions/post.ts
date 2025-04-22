@@ -39,6 +39,7 @@ export async function likePost(postId: string) {
     return isLiked
       ? { success: true, message: "Post like removed!" }
       : { success: true, message: "Post liked!" };
+      
   } catch (error) {
     console.log("[POST_LIKE_ERROR]: ", error);
     return { success: false, message: "Error liking post" };

@@ -41,7 +41,6 @@ export default function UserNavComp() {
       console.log(data.message);
       setNotificationCount((prev) => prev + 1);
     };
-
     eventEmitter.on("notification", listener);
 
     return () => {

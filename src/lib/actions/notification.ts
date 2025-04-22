@@ -31,8 +31,6 @@ export async function sendNotification({
     await notification.save();
 
     const controller = onlineUsers.get(reciever);
-    console.log(controller, onlineUsers, reciever);
-    
     if (controller) {
       controller.enqueue(`data: ${JSON.stringify(notification)}\n\n`);
     }

@@ -1,9 +1,7 @@
 import { veryfySession } from "@/lib/actions/session";
-import { Notification } from "@/lib/models";
 import { NextRequest, NextResponse } from "next/server";
 import {
   addUserToOnlineUsers,
-  onlineUsers,
   removeUserFromOnlineUsers,
 } from "./online_users";
 
@@ -22,14 +20,7 @@ export async function GET(req: NextRequest) {
       start(controller) {
         addUserToOnlineUsers(userId as string, controller);
 
-        controller.enqueue("event: ping\ndata: ping\n\n");
-
-        const interval = setInterval(() => {
-          controller.enqueue("event: ping\ndata: ping\n\n");
-        }, 45000);
-
         req.signal.addEventListener("abort", () => {
-          clearInterval(interval);
           removeUserFromOnlineUsers(userId as string);
           controller.close();
         });
@@ -54,46 +45,46 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
-  try {
-    const { userId, isAuth } = await veryfySession();
+// export async function POST(req: NextRequest) {
+//   try {
+//     const { userId, isAuth } = await veryfySession();
 
-    if (!isAuth) {
-      return NextResponse.json(
-        { success: false, message: "Unauthorised" },
-        { status: 401 },
-      );
-    }
+//     if (!isAuth) {
+//       return NextResponse.json(
+//         { success: false, message: "Unauthorised" },
+//         { status: 401 },
+//       );
+//     }
 
-    const { receiverId, type, message } = await req.json();
+//     const { receiverId, type, message } = await req.json();
 
-    const notification = new Notification({
-      type,
-      message,
-      sender: userId,
-      receiver: receiverId,
-    });
+//     const notification = new Notification({
+//       type,
+//       message,
+//       sender: userId,
+//       receiver: receiverId,
+//     });
 
-    await notification.save();
+//     await notification.save();
 
-    const controller = onlineUsers.get(receiverId);
-    if (controller) {
-      controller.enqueue(`data: ${JSON.stringify(notification)}\n\n`);
-      return new NextResponse("Notification sent in real-time", {
-        status: 201,
-      });
-    } else {
-      console.log("User is offline");
-      return NextResponse.json(
-        { success: true, message: "Notification stored for offline user" },
-        { status: 201 },
-      );
-    }
-  } catch (error) {
-    console.log("[REAL_TIME_NOTIFICATION_POST_ERROR]: ", error);
-    return NextResponse.json(
-      { success: false, message: "Internal error" },
-      { status: 500 },
-    );
-  }
-}
+//     const controller = onlineUsers.get(receiverId);
+//     if (controller) {
+//       controller.enqueue(`data: ${JSON.stringify(notification)}\n\n`);
+//       return new NextResponse("Notification sent in real-time", {
+//         status: 201,
+//       });
+//     } else {
+//       console.log("User is offline");
+//       return NextResponse.json(
+//         { success: true, message: "Notification stored for offline user" },
+//         { status: 201 },
+//       );
+//     }
+//   } catch (error) {
+//     console.log("[REAL_TIME_NOTIFICATION_POST_ERROR]: ", error);
+//     return NextResponse.json(
+//       { success: false, message: "Internal error" },
+//       { status: 500 },
+//     );
+//   }
+// }
