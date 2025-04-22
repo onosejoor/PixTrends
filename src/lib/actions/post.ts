@@ -19,6 +19,7 @@ export async function likePost(postId: string) {
     }
 
     const isLiked = findPost?.likes.some((id) => id.toString() === userId);
+    const isUser = findPost.user.id === userId
 
     const update = isLiked
       ? { $pull: { likes: userId } }
@@ -28,7 +29,7 @@ export async function likePost(postId: string) {
       new: true,
     });
 
-    if (!isLiked) {
+    if (!isLiked && !isUser) {
       sendNotification({
         reciever: findPost.user._id.toString(),
         message: `${username} liked your post!`,

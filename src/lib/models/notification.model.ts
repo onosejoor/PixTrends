@@ -3,7 +3,6 @@ import mongoose, { Model, model, Schema, Types } from "mongoose";
 interface INotification {
   sender: Types.ObjectId;
   reciever: Types.ObjectId;
-  message: string;
   type: string;
   isRead: boolean;
   postId: Types.ObjectId;
@@ -27,14 +26,15 @@ const notificationSchema = new Schema<INotification>(
       required: false,
       default: null,
     },
-    type: { type: String, required: true, alias: ["like", "follow", "reply"] },
-    message: { type: String, required: true },
+    type: { type: String, required: true, alias: ["like", "follow", "reply", "comment"] },
     isRead: { type: Boolean, required: false, default: false },
   },
   {
     timestamps: true,
   },
 );
+
+notificationSchema.index({ reciever: -1 });
 
 const Notification: Model<INotification> =
   mongoose.models?.Notification ||

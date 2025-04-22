@@ -35,7 +35,6 @@ export default function UserNavComp() {
   const path = usePathname();
   const notificationActive = "/notifications" === path;
 
-
   useEffect(() => {
     const listener = (data: { message: string }) => {
       console.log(data.message);
@@ -63,7 +62,7 @@ export default function UserNavComp() {
 
   const { username, unreadNotifications } = data!;
 
-  const isUnread = unreadNotifications > 0 || notificationCount > 0
+  const isUnread = unreadNotifications > 0 || notificationCount > 0;
 
   const userLinks = [
     { name: "Create", href: "/create", icon: <CreateIcon /> },
@@ -132,30 +131,26 @@ const AuthLinks = ({ path }: { path: string }) => {
     { name: "Signup", href: "/signup", icon: <SignUpIcon /> },
   ];
 
-  return (
-    <>
-      {authLinks.map(({ name, href, icon }, index) => {
-        const isActive = href === path;
-        return (
-          <li
-            key={index}
-            data-active={isActive}
-            className="group xsm:data-[active=true]:bg-accent xsm:hover:bg-accent/20 rounded-[10px]"
-          >
-            <Link href={href} className="xsm:p-2 flex items-center sm:gap-3">
-              <div className="grid justify-items-center gap-1.5">
-                {icon}
-                {isActive && (
-                  <div className="bg-accent xsm:hidden block h-1 w-1 rounded-full"></div>
-                )}
-              </div>
-              <span className="group-data-[active=true]:text-foreground text-gray hidden font-medium md:block">
-                {name}
-              </span>
-            </Link>
-          </li>
-        );
-      })}
-    </>
-  );
+  return authLinks.map(({ name, href, icon }, index) => {
+    const isActive = href === path;
+    return (
+      <li
+        key={index}
+        data-active={isActive}
+        className="group xsm:data-[active=true]:bg-accent xsm:hover:bg-accent/20 rounded-[10px]"
+      >
+        <Link href={href} className="xsm:p-2 flex items-center sm:gap-3">
+          <div className="grid justify-items-center gap-1.5">
+            {icon}
+            {isActive && (
+              <div className="bg-accent xsm:hidden block h-1 w-1 rounded-full"></div>
+            )}
+          </div>
+          <span className="group-data-[active=true]:text-foreground text-gray hidden font-medium md:block">
+            {name}
+          </span>
+        </Link>
+      </li>
+    );
+  });
 };

@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { isAuth, userId } = await veryfySession();
+    const { isAuth, userId, username } = await veryfySession();
 
     if (!isAuth) {
       return NextResponse.json(
@@ -62,9 +62,13 @@ export async function POST(req: NextRequest) {
     });
 
     await newPost.save();
+
+    const link = `/${username}/posts/${newPost.id}`;
+
     return NextResponse.json({
       success: true,
       message: "Post has been created",
+      link,
     });
   } catch (error) {
     console.log("[CREATE_NEW_POST_ERROR]:", error);

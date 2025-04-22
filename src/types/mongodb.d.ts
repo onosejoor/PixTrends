@@ -11,7 +11,7 @@ declare global {
     avatar: string;
     bio: string;
     username: string;
-    folowers: Types.ObjectId[];
+    followers: Types.ObjectId[];
     following: Types.ObjectId[];
     createdAt: Date;
   }
@@ -48,8 +48,7 @@ declare global {
     createdAt: Date;
     sender: Omit<IUser, "password" | "email">;
     reciever: Omit<IUser, "password" | "email">;
-    message: string;
-    type: "like" | "follow" | "reply";
+    type: "like" | "follow" | "reply" | "comment";
     postId: string | null;
     isRead: boolean;
   }

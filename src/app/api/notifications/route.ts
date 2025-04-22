@@ -1,8 +1,18 @@
 import { veryfySession } from "@/lib/actions/session";
 import { Notification } from "@/lib/models";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const searchParams = req.nextUrl.searchParams;
+
+  const { page, limit } = Object.fromEntries(searchParams) as {
+    page: string;
+    limit: string;
+  };
+
+  const nextPage = parseInt(page) || 1;
+  const pageLimit = parseInt(limit) || 20;
+
   try {
     const { userId, isAuth } = await veryfySession();
 
@@ -13,22 +23,22 @@ export async function GET() {
       );
     }
 
-    const findNotifications = Notification.find({
+    const notifications = await Notification.find({
       reciever: userId,
-    }).populate("sender", ["-password", "-email"]);
+    })
+      .populate("sender", ["-password", "-email"])
+      .sort({ createdAt: -1 })
+      .skip((nextPage - 1) * pageLimit)
+      .limit(pageLimit);
 
-    const removeUnread = Notification.updateMany(
-      { reciever: userId }, 
-      { isRead: true },
-    );
-
-    const [notifications] = await Promise.all([
-      findNotifications,
-      removeUnread,
-    ]);
+    await Notification.updateMany({ reciever: userId }, { isRead: true });
 
     return NextResponse.json({ success: true, notifications }, { status: 200 });
   } catch (error) {
-    console.log("[GET_NOYIFICATION_ERROR]:", error);
+    console.log("[GET_NOTIFICATION_ERROR]:", error);
+    return NextResponse.json(
+      { success: false, message: "Internal error" },
+      { status: 500 },
+    );
   }
 }

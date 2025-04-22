@@ -10,7 +10,7 @@ interface IUser {
   avatar: string;
   bio: string;
   username: string;
-  folowers: Types.ObjectId[];
+  followers: Types.ObjectId[];
   following: Types.ObjectId[];
   createdAt: Date;
 }
@@ -34,7 +34,7 @@ const userSchema = new Schema<IUser>(
       sparse: true,
     },
     bio: { type: String, required: false, default: "" },
-    folowers: [{ type: Types.ObjectId, ref: "User" }],
+    followers: [{ type: Types.ObjectId, ref: "User" }],
     following: [{ type: Types.ObjectId, ref: "User" }],
   },
   {

@@ -10,7 +10,7 @@ import CharCountCircle from "./CharCount";
 import { uploadImages } from "@/lib/actions/upload";
 import { MdCancel } from "react-icons/md";
 import axios from "axios";
-import TextareaAutosize from 'react-textarea-autosize';
+import TextareaAutosize from "react-textarea-autosize";
 
 type FormData = {
   imagesUrl: string[];
@@ -20,6 +20,7 @@ type FormData = {
 type APIResponse = {
   success: boolean;
   message: string;
+  link: string;
 };
 
 export default function CreatePostForm() {
@@ -85,13 +86,12 @@ export default function CreatePostForm() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    setIsLoading(true);
+
     try {
       let uploadedImageUrls: string[] = [];
-
-      // Only upload images if there are any
       if (imageFiles && imageFiles.length > 0) {
         const uploadResult = await uploadImages(imageFiles);
-
         if (!uploadResult.success) {
           showToast({
             message: uploadResult.message || "Failed to upload images",
@@ -100,32 +100,24 @@ export default function CreatePostForm() {
           setIsLoading(false);
           return;
         }
-
-        // Extract the URLs from the upload result
         uploadedImageUrls = uploadResult.urls!;
       }
-
-      console.log(uploadedImageUrls);
       const sendFormToApi = await axios.post<APIResponse>("/api/posts", {
         text,
         images: uploadedImageUrls,
       });
-
       const response = sendFormToApi.data;
-
       showToast({
         message: response.message,
         variants: response.success ? "success" : "error",
       });
-
       if (response.success) {
         setText("");
         setFormData({
           imagesUrl: [],
           imageFiles: null,
         });
-
-        router.push("/");
+        router.push(response.link);
       }
     } catch (error) {
       console.error("Error creating post:", error);
@@ -164,9 +156,10 @@ export default function CreatePostForm() {
               onChange={handleChange}
               name="text"
               value={text}
-              className="border-gray focus:border-accent resize-none text-gray border-b outline-none"
+              className="border-gray focus:border-accent text-gray resize-none border-b outline-none"
               placeholder="What's trending?"
-              minRows={2} maxRows={7}
+              minRows={2}
+              maxRows={7}
             />
           </div>
         </div>
@@ -210,7 +203,11 @@ export default function CreatePostForm() {
             <FaImage className="fill-gray group-hover:fill-accent size-5 cursor-pointer" />
           </label>
 
-          <CharCountCircle text={text} disabled={isDisabled} />
+          <CharCountCircle
+            text={text}
+            disabled={isDisabled}
+            loading={isLoading}
+          />
         </div>
       </form>
     </div>

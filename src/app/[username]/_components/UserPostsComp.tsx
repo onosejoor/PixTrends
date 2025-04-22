@@ -40,9 +40,11 @@ export default function UserPosts({ username, isUser }: Props) {
   const { posts, userId } = data!;
 
   return (
-    <div className="grid gap-10">
+    <div className="grid">
+      <div className="*:mb-2 grid">
       <h2 className="text-primary px-5 text-xl font-bold sm:px-10">Posts</h2>
-      <hr className="border-gray" />
+      <hr className="border-light-gray w-25" />        
+      </div>
       <div className="divide-accent divide-y">
         {posts.length > 0 ? (
           posts.map((post, index) => (

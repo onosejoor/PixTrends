@@ -30,7 +30,9 @@ async function checkIsUser(
       return { status: "self" };
     }
 
-    const isFollowing = user?.folowers.some((uid) => uid === userId);
+    const isFollowing = user?.followers.some((uid) =>
+      uid.equals(userId as string),
+    );
 
     switch (isFollowing) {
       case true:

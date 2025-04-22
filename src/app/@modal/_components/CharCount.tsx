@@ -1,16 +1,19 @@
 "use client";
 
+import Spinner from "@/components/loaders/Spinner";
 import { cx } from "@/components/utils";
 import { useState, useEffect } from "react";
 
 interface CharCountCircleProps {
   text: string;
   disabled: boolean;
+  loading: boolean;
 }
 
 export default function CharCountCircle({
   text,
   disabled,
+  loading,
 }: CharCountCircleProps) {
   const [charCount, setCharCount] = useState(0);
   const maxCount = 200;
@@ -86,7 +89,7 @@ export default function CharCountCircle({
           isDisabled && "bg-primary/50 cursor-not-allowed",
         )}
       >
-        Post
+        {loading ? <Spinner color="primary" /> : "Post"}
       </button>
     </div>
   );
