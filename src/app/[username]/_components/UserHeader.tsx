@@ -29,7 +29,7 @@ export default function UserHeader({
   username: string;
   status: Status;
 }) {
-  const { data, isLoading, error } = useSWR<APIResponse>(
+  const { data, isLoading, error, mutate } = useSWR<APIResponse>(
     `/api/users/${username}`,
     fetcher,
   );
@@ -46,7 +46,7 @@ export default function UserHeader({
     <section className="fade-in w-full">
       <div
         className={cx(
-          "opacity/70 h-37.5 w-full sm:h-[200px]",
+          "opacity/70 h-37.5 w-full p-5 sm:h-[200px] rounded-br-[10px] rounded-bl-[10px]",
           backgroundClass ||
             "bg-[#cc5500]/20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDIiPjwvcmVjdD4KPC9zdmc+')]",
         )}
@@ -57,9 +57,9 @@ export default function UserHeader({
           <Img
             src={avatar}
             alt={`${name}'s avatar`}
-            className="border-accent shadow-avatar h-37.5 w-37.5 rounded-full border-2"
+            className="border-light-gray shadow-avatar h-37.5 w-37.5 rounded-full border-2"
           />
-          <FollowBtn status={status} userId={_id.toString()} />
+          <FollowBtn status={status} mutate={mutate} userId={_id.toString()} />
         </div>
 
         <div className="fade-in *:mb-5">

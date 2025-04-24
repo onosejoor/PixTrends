@@ -1,3 +1,4 @@
+import { sendNotification } from "@/lib/actions/notification";
 import { veryfySession } from "@/lib/actions/session";
 import { Comment, Post } from "@/lib/models";
 import { startSession } from "mongoose";
@@ -76,7 +77,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const getPost = await Post.findById(postId);
+    const getPost = await Post.findById(postId).populate<{ user: IUser }>(
+      "user",
+    );
 
     if (!getPost) {
       return NextResponse.json(
@@ -104,6 +107,11 @@ export async function POST(req: NextRequest) {
 
     await session.commitTransaction();
     session.endSession();
+
+    await sendNotification({
+      reciever: getPost.user._id.toString(),
+      type: "comment", 
+    });
 
     return NextResponse.json(
       { success: true, message: "Comment created " },

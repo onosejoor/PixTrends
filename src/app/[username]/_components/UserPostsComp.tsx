@@ -1,11 +1,13 @@
 "use client";
 
-import PostLoader from "@/components/loaders/PostLoader";
-import EmptyState from "@/components/empty-states/PostEmptyState";
 import axios from "axios";
 import dayjs from "dayjs";
 import useSWR from "swr";
 import relativeTime from "dayjs/plugin/relativeTime";
+
+import PostLoader from "@/components/loaders/PostLoader";
+import EmptyState from "@/components/empty-states/PostEmptyState";
+
 import PostCards from "../../_components/posts/PostCards";
 
 dayjs.extend(relativeTime);
@@ -41,9 +43,9 @@ export default function UserPosts({ username, isUser }: Props) {
 
   return (
     <div className="grid">
-      <div className="*:mb-2 grid">
-      <h2 className="text-primary px-5 text-xl font-bold sm:px-10">Posts</h2>
-      <hr className="border-light-gray w-25" />        
+      <div className="grid *:mb-2">
+        <h2 className="text-primary px-5 text-xl font-bold sm:px-10">Posts</h2>
+        <hr className="border-light-gray w-25" />
       </div>
       <div className="divide-accent divide-y">
         {posts.length > 0 ? (

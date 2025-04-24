@@ -6,7 +6,7 @@ import { veryfySession } from "./session";
 
 export async function likePost(postId: string) {
   try {
-    const { isAuth, userId, username } = await veryfySession();
+    const { isAuth, userId } = await veryfySession();
 
     if (!isAuth) {
       return { success: false, message: "Unauthorized!" };
@@ -19,7 +19,7 @@ export async function likePost(postId: string) {
     }
 
     const isLiked = findPost?.likes.some((id) => id.toString() === userId);
-    const isUser = findPost.user.id === userId
+    const isUser = findPost.user.id === userId;
 
     const update = isLiked
       ? { $pull: { likes: userId } }
@@ -32,7 +32,6 @@ export async function likePost(postId: string) {
     if (!isLiked && !isUser) {
       sendNotification({
         reciever: findPost.user._id.toString(),
-        message: `${username} liked your post!`,
         type: "like",
       });
     }
@@ -40,7 +39,6 @@ export async function likePost(postId: string) {
     return isLiked
       ? { success: true, message: "Post like removed!" }
       : { success: true, message: "Post liked!" };
-      
   } catch (error) {
     console.log("[POST_LIKE_ERROR]: ", error);
     return { success: false, message: "Error liking post" };

@@ -9,7 +9,7 @@ export default function Nav({ children }: { children: React.ReactNode }) {
   const path = usePathname();
 
   const navItems = [
-    { name: "For You", href: "/", icon: <HomeIcon /> },
+    { name: "Home", href: "/", icon: <HomeIcon /> },
     { name: "Following", href: "/discover", icon: <SearchIcon /> },
   ];
 

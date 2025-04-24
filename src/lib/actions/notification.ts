@@ -7,14 +7,12 @@ import { onlineUsers } from "@/app/api/notifications/stream/online_users";
 type NotificationProps = {
   reciever: string;
   type: INotification["type"];
-  message: string;
   postId?: string;
 };
 
 export async function sendNotification({
   reciever,
   type,
-  message,
   postId,
 }: NotificationProps) {
   try {
@@ -23,7 +21,6 @@ export async function sendNotification({
     const notification = new Notification({
       reciever,
       sender: userId,
-      message,
       type,
       postId,
     });

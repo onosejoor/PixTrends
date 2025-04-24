@@ -1,7 +1,6 @@
 "use client";
 
-import { cx } from "@/components/utils";
-import { showToast } from "@/hooks/useToast";
+import { copyToClipboard, cx } from "@/components/utils";
 import { likePost } from "@/lib/actions/post";
 import { MessageSquare, Share2 } from "lucide-react";
 import { Types } from "mongoose";
@@ -13,13 +12,14 @@ type Props = {
   userId: string | null;
   postId: string;
   comments: number;
+  link: string;
 };
 
 export default function LikeSection({
   likes,
   userId,
   postId,
-  comments,
+  comments, link
 }: Props) {
   const isLiked = likes.some((id) => id.toString() === userId);
 
@@ -32,15 +32,6 @@ export default function LikeSection({
 
     await likePost(postId);
   };
-
-  async function copyLink() {
-    const link = "jbjbwuwguwguw";
-    navigator.clipboard.writeText(link);
-    showToast({
-      variants: "success",
-      message: "link coppied to clipboard",
-    });
-  }
 
   return (
     <div className="relative z-5 flex items-center gap-7.5">
@@ -67,7 +58,7 @@ export default function LikeSection({
         <span className="text-secondary -ml-2">{comments}</span>
       </div>
       <button
-        onClick={copyLink}
+        onClick={() => copyToClipboard(link)}
         className="group hover:bg-accent/10 grid place-items-center rounded-full p-2"
       >
         <Share2 className="stroke-gray group-hover:stroke-accent size-5" />

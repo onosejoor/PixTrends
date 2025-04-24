@@ -1,12 +1,15 @@
 "use client";
 
-import LikeSection from "@/app/[username]/_components/LikeSection";
-import CommentSection from "@/app/_components/comments/Comment";
-import Img from "@/components/Img";
-import DynamicPostLoader from "@/components/loaders/DynamicPostLoader";
-import { cx } from "@/components/utils";
 import axios from "axios";
 import useSWR from "swr";
+
+import GoBackWithMenu from "./GoBackMenu";
+
+import { cx } from "@/components/utils";
+import Img from "@/components/Img";
+import LikeSection from "@/app/[username]/_components/LikeSection";
+import CommentSection from "@/app/_components/comments/Comment";
+import DynamicPostLoader from "@/components/loaders/DynamicPostLoader";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -57,8 +60,13 @@ const DynamicPostCard = ({ post, userId }: Props) => {
     _id,
   } = post;
 
+  const link = `${window.location.origin}/${username}/posts/${_id}`;
+
+
   return (
     <article className="grid gap-7 p-5">
+      <GoBackWithMenu />
+      <hr className="border-light-gray/70" />
       <div className="flex flex-col gap-6">
         <div className="flex items-start gap-5">
           <Img
@@ -71,13 +79,13 @@ const DynamicPostCard = ({ post, userId }: Props) => {
             <p className="text-accent text-base font-medium">@{username}</p>
           </div>
         </div>
-        <p className="text-secondary sm:text-lg whitespace-break-spaces">
+        <p className="text-secondary whitespace-break-spaces sm:text-lg">
           {content}
         </p>
         {images.length > 0 && (
           <div
             className={cx(
-              "no-scrollbar flex h-125 gap-5 overflow-x-scroll",
+              "no-scrollbar flex h-100 gap-5 overflow-x-scroll sm:h-125",
               images.length > 1 && "h-75",
             )}
           >
@@ -93,7 +101,7 @@ const DynamicPostCard = ({ post, userId }: Props) => {
               >
                 <Img
                   src={image}
-                  className="rounded-[10px] object-cover size-full"
+                  className="size-full rounded-[10px] object-cover"
                   alt={`img-${index}`}
                 />
               </picture>
@@ -104,6 +112,7 @@ const DynamicPostCard = ({ post, userId }: Props) => {
       <div className="grid h-fit gap-3">
         <hr className="border-light-gray" />
         <LikeSection
+          link={link}
           userId={userId}
           likes={likes}
           comments={comments}

@@ -1,12 +1,13 @@
 "use client";
 
-import Img from "@/components/Img";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import { cx } from "@/components/utils";
-import LikeSection from "../../[username]/_components/LikeSection";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+import Img from "@/components/Img";
+import { cx } from "@/components/utils";
+import LikeSection from "@/app/[username]/_components/LikeSection";
 
 dayjs.extend(relativeTime);
 
@@ -17,13 +18,12 @@ const imageClass = {
   "4": "max-w-[200px]",
 };
 
-const PostCards = ({
-  post,
-  userId,
-}: {
+type Props = {
   post: IPost;
   userId: string | null;
-}) => {
+};
+
+const PostCards = ({ post, userId }: Props) => {
   const { user, content, images, likes, comments, createdAt, _id } = post;
   const router = useRouter();
 
@@ -32,11 +32,13 @@ const PostCards = ({
 
   const handleStopPropagation = (e: React.MouseEvent) => e.stopPropagation();
 
+  const link = `${window.location.origin}/${user.username}/posts/${_id}`;
+
   return (
     <article className="sm:p-10">
       <div
-        className="sm:shadow-post-card shadow-light-gray/50 grid h-fit w-full cursor-pointer gap-6 bg-white p-5 shadow-none sm:rounded-[10px] md:max-w-[700px]"
-        onClick={() => router.push(`/${user.username}/posts/${_id}`)}
+        className=" grid h-fit w-full cursor-pointer gap-6 bg-white p-5 shadow-none sm:rounded-[10px] md:max-w-[700px]"
+        onClick={() => router.push(link)}
       >
         <div className="flex items-start gap-5">
           <Img
@@ -48,7 +50,7 @@ const PostCards = ({
           <div className="grid h-fit gap-1">
             <Link
               href={`/${user.username}`}
-              className="text-primary hover:underline font-semibold"
+              className="text-primary font-semibold hover:underline"
               onClick={handleStopPropagation}
             >
               {user.username}
@@ -72,7 +74,7 @@ const PostCards = ({
                       images.length.toString() as keyof typeof imageClass
                     ],
                   )}
-                  onClick={handleStopPropagation} // Cleaner function usage
+                  onClick={handleStopPropagation}
                 >
                   <Img
                     src={image}
@@ -87,6 +89,7 @@ const PostCards = ({
 
         <div onClick={handleStopPropagation}>
           <LikeSection
+            link={link}
             postId={_id.toString()}
             userId={userId}
             likes={likes}
