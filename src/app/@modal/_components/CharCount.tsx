@@ -16,7 +16,7 @@ export default function CharCountCircle({
   loading,
 }: CharCountCircleProps) {
   const [charCount, setCharCount] = useState(0);
-  const maxCount = 200;
+  const maxCount = 300;
 
   const isDisabled = disabled || charCount > maxCount;
 

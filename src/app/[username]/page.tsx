@@ -3,10 +3,37 @@ import { User } from "@/lib/models";
 import { notFound } from "next/navigation";
 import UserHeader from "./_components/UserHeader";
 import { veryfySession } from "@/lib/actions/session";
+import { Metadata } from "next";
 
 type Params = {
   params: Promise<{ username: string }>;
 };
+
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const username = (await params).username;
+
+  const findUser = await User.findOne({ username });
+
+  if (!findUser) {
+    return notFound();
+  }
+
+  const { name, bio, avatar } = findUser;
+
+  return {
+    title: {
+      absolute: `${name} (${username})`,
+    },
+    description: bio,
+    openGraph: {
+      title: {
+        absolute: `${name} (${username})`,
+      },
+      description: bio,
+      images: avatar,
+    },
+  };
+}
 
 type Status =
   | "unauthenticated"

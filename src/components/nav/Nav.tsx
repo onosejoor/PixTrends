@@ -14,7 +14,7 @@ export default function Nav({ children }: { children: React.ReactNode }) {
   ];
 
   return (
-    <aside className="border-light-gray xsm:h-full xsm:shadow-none shadow-accent xsm:w-[90px] xsm:bg-light-gray/20 fixed bottom-0 left-0 z-10 flex w-full flex-col gap-10 xsm:border-r-2 bg-white p-5 shadow-md md:w-[200px]">
+    <aside className="border-light-gray xsm:h-full xsm:shadow-none shadow-accent xsm:w-[70px] xsm:bg-light-gray/20 fixed bottom-0 left-0 z-10 flex w-full flex-col gap-10 xsm:border-r-2 bg-white xsm:px-2.5 px-5 p-5 sm:p-5 shadow-md md:w-[200px]">
       <Img
         src={"/images/logo.svg"}
         className="xsm:block hidden size-12.5"

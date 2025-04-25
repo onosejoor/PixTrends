@@ -53,7 +53,6 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await startSession();
   try {
     const { text, postId, parentId } = (await req.json()) as {
       text: string;
@@ -88,39 +87,51 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    session.startTransaction();
-    await Comment.create(
-      [
-        {
-          user: userId,
-          content: text,
-          post: postId,
-          ...(parentId && { parentId }),
-        },
-      ],
-      { session },
-    );
+    const session = await startSession();
 
-    if (!parentId) {
-      await getPost.updateOne({ $inc: { comments: 1 } }, { session });
+    try {
+      session.startTransaction();
+      await Comment.create(
+        [
+          {
+            user: userId,
+            content: text,
+            post: postId,
+            ...(parentId && { parentId }),
+          },
+        ],
+        { session },
+      );
+
+      if (!parentId) {
+        await getPost.updateOne({ $inc: { comments: 1 } }, { session });
+      }
+
+      await session.commitTransaction();
+      session.endSession();
+
+      if (!getPost.user._id.equals(userId as string)) {
+        await sendNotification({
+          reciever: getPost.user._id.toString(),
+          type: "comment",
+        });
+      }
+
+      return NextResponse.json(
+        { success: true, message: "Comment created " },
+        { status: 201 },
+      );
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      console.log("[POST_COMMENT_TRANSACTION_ERROR]:", error);
+      
+      return NextResponse.json(
+        { success: false, message: "Error creating comment" },
+        { status: 500 },
+      );
     }
-
-    await session.commitTransaction();
-    session.endSession();
-
-    await sendNotification({
-      reciever: getPost.user._id.toString(),
-      type: "comment", 
-    });
-
-    return NextResponse.json(
-      { success: true, message: "Comment created " },
-      { status: 200 },
-    );
   } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
-
     console.log("[POST_COMMENT_ERROR]: ", error);
 
     return NextResponse.json(

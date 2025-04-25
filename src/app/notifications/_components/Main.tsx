@@ -3,7 +3,7 @@
 import NotificationEmptyState from "@/components/empty-states/NotificationEmptyState";
 import Img from "@/components/Img";
 import axios from "axios";
-import { LucideHeart, ReplyAll } from "lucide-react";
+import { LucideHeart, MessageCircleMore, ReplyAll } from "lucide-react";
 import { MdPersonAdd } from "react-icons/md";
 import { useEffect, useState } from "react";
 
@@ -96,15 +96,18 @@ const NotificationCard = ({
 function getType(type: INotification["type"]) {
   switch (type) {
     case "like":
-      return <LucideHeart className="fill-accent size-7.5" stroke="none" />;
+      return <LucideHeart className="fill-blue-500 size-7.5" stroke="none" />;
     case "follow":
-      return <MdPersonAdd className="fill-accent size-7.5" />;
+      return <MdPersonAdd className="fill-blue-500 size-7.5" stroke="none" />;
 
     case "reply":
-      return <ReplyAll className="fill-accent size-7.5" />;
+      return <ReplyAll className="fill-blue-500 size-7.5" stroke="none" />;
+
+    case "comment":
+      return <MessageCircleMore className="fill-blue-500 size-7.5" stroke="none" />;
 
     default:
-      return <LucideHeart className="fill-accent size-7.5" />;
+      return <LucideHeart className="fill-blue-500 size-7.5" stroke="none" />;
   }
 }
 
@@ -115,16 +118,21 @@ function getMessage(
   const className = "text-secondary text-lg font-medium";
   switch (type) {
     case "like":
-      return <p className={className}>{user.username} Liked your post!</p>;
+      return <p className={className}>{user.username} liked your post!</p>;
     case "follow":
-      return <p className={className}>{user.username} Followed You!</p>;
+      return <p className={className}>{user.username} followed You!</p>;
 
     case "reply":
       return (
-        <p className={className}>{user.username} Replied to your comment!</p>
+        <p className={className}>{user.username} replied to your comment!</p>
+      );
+
+    case "comment":
+      return (
+        <p className={className}>{user.username} commented on your post!</p>
       );
 
     default:
-      return <p className={className}>{user.username} Liked your post!</p>;
+      return <p className={className}>{user.username} iked your post!</p>;
   }
 }

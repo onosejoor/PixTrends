@@ -6,6 +6,7 @@ import { RecentPosts } from "./_components/RecentPosts";
 import UserNavComp from "@/components/nav/UserNav";
 import { Toast } from "@/hooks/useToast";
 import NotificationHandler from "@/components/NotificationHandler";
+import TopNav from "@/components/nav/TopNav";
 
 const geistSans = Geist({
   variable: "--font-geist",
@@ -15,7 +16,7 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   title: {
     default: "Pixtrends",
-    template: "%s | Pixtrends",
+    template: "%s - Pixtrends",
   },
   description:
     "Pixtrends is a platform for sharing and discovering the latest trends in photography, art, and design.",
@@ -36,7 +37,10 @@ export const metadata: Metadata = {
     "designers",
   ],
   openGraph: {
-    title: "Pixtrends",
+    title: {
+      default: "Pixtrends",
+      template: "%s -  Pixtrends",
+    },
     description:
       "Pixtrends is a platform for sharing and discovering the latest trends in photography, art, and design.",
     url: "https://www.pixtrends.vercel.app",
@@ -66,17 +70,18 @@ export default function RootLayout({
         className={`${geistSans.variable} font-geist bg-foreground overflow-x-hidden antialiased`}
       >
         <NotificationHandler />
+        <TopNav />
         <Nav>
           <UserNavComp />
         </Nav>
         <div className="flex">
-          <div className="xsm:block xsm:w-[90px] sticky hidden h-dvh shrink-0 md:w-[200px]"></div>
+          <div className="xsm:block xsm:w-[70px] sticky hidden h-dvh shrink-0 md:w-[200px]"></div>
           <main className="w-full">
             {children} {modal}
+            <footer className="mb-25"></footer>
           </main>
           <RecentPosts />
         </div>
-        <footer className="mb-25"></footer>
 
         <Toast />
       </body>

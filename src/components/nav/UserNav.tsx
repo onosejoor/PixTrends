@@ -145,11 +145,11 @@ const AuthLinks = ({ path }: { path: string }) => {
             {isActive && (
               <div className="bg-accent xsm:hidden block h-1 w-1 rounded-full"></div>
             )}
-          
+         </div>     
           <span className="group-data-[active=true]:text-foreground text-gray hidden font-medium md:block">
             {name}
           </span>
-          </div>
+      
         </Link>
       </li>
     );

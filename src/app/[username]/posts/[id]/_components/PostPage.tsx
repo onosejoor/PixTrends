@@ -10,6 +10,7 @@ import Img from "@/components/Img";
 import LikeSection from "@/app/[username]/_components/LikeSection";
 import CommentSection from "@/app/_components/comments/Comment";
 import DynamicPostLoader from "@/components/loaders/DynamicPostLoader";
+import Link from "next/link";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -62,13 +63,12 @@ const DynamicPostCard = ({ post, userId }: Props) => {
 
   const link = `${window.location.origin}/${username}/posts/${_id}`;
 
-
   return (
     <article className="grid gap-7 p-5">
       <GoBackWithMenu />
       <hr className="border-light-gray/70" />
       <div className="flex flex-col gap-6">
-        <div className="flex items-start gap-5">
+        <Link href={`/${username}`} className="flex items-start gap-5">
           <Img
             src={avatar}
             className="size-10 rounded-full"
@@ -78,7 +78,7 @@ const DynamicPostCard = ({ post, userId }: Props) => {
             <h2 className="text-primary text-lg font-semibold">{name}</h2>
             <p className="text-accent text-base font-medium">@{username}</p>
           </div>
-        </div>
+        </Link>
         <p className="text-secondary whitespace-break-spaces sm:text-lg">
           {content}
         </p>
@@ -93,7 +93,7 @@ const DynamicPostCard = ({ post, userId }: Props) => {
               <picture
                 key={index}
                 className={cx(
-                  "sm:shrink-0",
+                  "shrink-0",
                   imageClass[
                     images.length.toString() as keyof typeof imageClass
                   ],

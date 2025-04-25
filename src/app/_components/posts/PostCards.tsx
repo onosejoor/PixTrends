@@ -27,8 +27,9 @@ const PostCards = ({ post, userId }: Props) => {
   const { user, content, images, likes, comments, createdAt, _id } = post;
   const router = useRouter();
 
-  const truncateText =
-    images.length > 0 ? `${content.slice(0, 200)}...` : content;
+  const isLengthy = images.length > 0 && content.length > 150;
+
+  const truncateText = isLengthy ? `${content.slice(0, 150)}...` : content;
 
   const handleStopPropagation = (e: React.MouseEvent) => e.stopPropagation();
 
@@ -37,32 +38,39 @@ const PostCards = ({ post, userId }: Props) => {
   return (
     <article className="sm:p-10">
       <div
-        className=" grid h-fit w-full cursor-pointer gap-6 bg-white p-5 shadow-none sm:rounded-[10px] md:max-w-[700px]"
+        className="grid h-fit w-full cursor-pointer gap-6 bg-white p-5 shadow-none sm:rounded-[10px] md:max-w-[700px]"
         onClick={() => router.push(link)}
       >
-        <div className="flex items-start gap-5">
-          <Img
-            src={user.avatar}
-            className="size-12.5 rounded-full"
-            alt="user"
-            onClick={handleStopPropagation}
-          />
-          <div className="grid h-fit gap-1">
-            <Link
-              href={`/${user.username}`}
-              className="text-primary font-semibold hover:underline"
-              onClick={handleStopPropagation}
-            >
-              {user.username}
-            </Link>
-            <time className="text-accent font-medium">
-              {dayjs(createdAt).fromNow()}
-            </time>
+        <Link href={`/${user.username}`} onClick={handleStopPropagation}>
+          <div className="flex items-start gap-5">
+            <Img
+              src={user.avatar}
+              className="size-12.5 rounded-full"
+              alt="user"
+            />
+            <div className="grid h-fit gap-1">
+              <div className="text-primary font-semibold hover:underline">
+                {user.username}
+              </div>
+              <time className="text-accent font-medium">
+                {dayjs(createdAt).fromNow()}
+              </time>
+            </div>
           </div>
-        </div>
-
+        </Link>
         <div className="grid gap-6">
-          <p className="text-gray whitespace-break-spaces">{truncateText}</p>
+          <div>
+            <p className="text-gray whitespace-break-spaces">{truncateText}</p>
+            {(isLengthy || content.length > 500) && (
+              <Link
+                href={`/${user.username}/posts/${_id}`}
+                className="text-accent text-sm underline"
+              >
+                See-more
+              </Link>
+            )}
+          </div>
+
           {images.length > 0 && (
             <div className="no-scrollbar flex h-[250px] gap-5 overflow-x-scroll">
               {images.map((image, index) => (

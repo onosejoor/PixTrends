@@ -10,7 +10,7 @@ export default function GoBackWithMenu() {
   const [showModal, setShowModal] = useState(false);
 
   return (
-    <div className="flex items-center justify-between px-4 py-2">
+  <div className="flex items-center justify-between py-2">
       {showModal && (
         <div
           className="fixed inset-0 z-1 flex items-center justify-center bg-transparent"
@@ -35,7 +35,6 @@ export default function GoBackWithMenu() {
         {showModal && (
           <div
             className="animate-in zoom-in-0 absolute right-full z-10 w-50 rounded-xl bg-white p-5 shadow-xl"
-            onClick={(e) => e.stopPropagation()}
           >
             <ul className="space-y-3">
               <li className="w-full">
