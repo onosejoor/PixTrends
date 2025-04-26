@@ -7,6 +7,7 @@ import Img from "@/components/Img";
 import { backgrounds } from "./bg-gradients";
 import { cx } from "@/components/utils";
 import FollowBtn from "./FollowBtn";
+import ProfileError from "../error";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -34,11 +35,15 @@ export default function UserHeader({
     fetcher,
   );
 
-  if (error) return <p>error....</p>;
+  if (error) {
+    return <ProfileError />;
+  }
+
   if (isLoading) return <PageLoader />;
 
   const { user } = data!;
   const { avatar, name, following, followers, bio, _id } = user;
+  
   const randomBg = Math.ceil(Math.random() * 20);
   const backgroundClass = backgrounds[randomBg]?.class;
 
@@ -46,7 +51,7 @@ export default function UserHeader({
     <section className="fade-in w-full">
       <div
         className={cx(
-          "opacity/70 h-37.5 w-full p-5 sm:h-[200px] rounded-br-[10px] rounded-bl-[10px]",
+          "opacity/70 h-37.5 w-full rounded-br-[10px] rounded-bl-[10px] p-5 sm:h-[200px]",
           backgroundClass ||
             "bg-[#cc5500]/20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDIiPjwvcmVjdD4KPC9zdmc+')]",
         )}

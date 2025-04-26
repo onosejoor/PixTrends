@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import "./globals.css";
+
 import Nav from "@/components/nav/Nav";
-import { RecentPosts } from "./_components/RecentPosts";
-import UserNavComp from "@/components/nav/UserNav";
-import { Toast } from "@/hooks/useToast";
 import NotificationHandler from "@/components/NotificationHandler";
 import TopNav from "@/components/nav/TopNav";
+import UserNavComp from "@/components/nav/UserNav";
+
+import { RecentPosts } from "./_components/RecentPosts";
+import { Toast } from "@/hooks/useToast";
+
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist",

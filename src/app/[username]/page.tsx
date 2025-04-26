@@ -2,7 +2,7 @@ import UserPosts from "./_components/UserPostsComp";
 import { User } from "@/lib/models";
 import { notFound } from "next/navigation";
 import UserHeader from "./_components/UserHeader";
-import { veryfySession } from "@/lib/actions/session";
+import { verifySession } from "@/lib/actions/session";
 import { Metadata } from "next";
 
 type Params = {
@@ -22,12 +22,12 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
   return {
     title: {
-      absolute: `${name} (${username})`,
+      absolute: `${name} (${username}) on PixTrends`,
     },
     description: bio,
     openGraph: {
       title: {
-        absolute: `${name} (${username})`,
+        absolute: `${name} (${username}) on PixTrends`,
       },
       description: bio,
       images: avatar,
@@ -47,7 +47,7 @@ async function checkIsUser(
   user: IUser,
 ): Promise<{ status: Status }> {
   try {
-    const { isAuth, username: authUsername, userId } = await veryfySession();
+    const { isAuth, username: authUsername, userId } = await verifySession();
 
     if (!isAuth) {
       return { status: "unauthenticated" };

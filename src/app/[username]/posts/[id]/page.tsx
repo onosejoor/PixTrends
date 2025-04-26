@@ -23,14 +23,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   } = findUser;
 
   return {
-    title: {
-      absolute: `${name} (${username}) on PixTrends`,
-    },
+    title: `${name} (${username}) `,
+
     description: content,
     openGraph: {
-      title: {
-        absolute: `${name} (${username}) on PixTrends`,
-      },
+      title: `${name} (${username}) `,
       description: content,
       images: images.length > 0 ? images : avatar,
     },

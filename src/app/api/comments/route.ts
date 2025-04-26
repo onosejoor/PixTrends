@@ -1,5 +1,5 @@
 import { sendNotification } from "@/lib/actions/notification";
-import { veryfySession } from "@/lib/actions/session";
+import { verifySession } from "@/lib/actions/session";
 import { Comment, Post } from "@/lib/models";
 import { startSession } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
       parentId: string | null;
     };
 
-    const { isAuth, userId } = await veryfySession();
+    const { isAuth, userId } = await verifySession();
 
     if (!isAuth) {
       return NextResponse.json(
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
 
     try {
       session.startTransaction();
-      await Comment.create(
+      const newComment = await Comment.create(
         [
           {
             user: userId,
@@ -114,6 +114,8 @@ export async function POST(req: NextRequest) {
         await sendNotification({
           reciever: getPost.user._id.toString(),
           type: "comment",
+          postId,
+          commentId: newComment[0].id,
         });
       }
 
@@ -125,7 +127,7 @@ export async function POST(req: NextRequest) {
       await session.abortTransaction();
       session.endSession();
       console.log("[POST_COMMENT_TRANSACTION_ERROR]:", error);
-      
+
       return NextResponse.json(
         { success: false, message: "Error creating comment" },
         { status: 500 },

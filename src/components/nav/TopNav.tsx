@@ -2,7 +2,7 @@ import Img from "../Img";
 
 export default function TopNav() {
   return (
-    <div className="xsm:hidden block p-3">
+    <div className="xsm:hidden block p-3 bg-transparent">
       <Img
         src={"/images/logo.svg"}
         className="mx-auto size-12.5"

@@ -1,4 +1,4 @@
-import { veryfySession } from "@/lib/actions/session";
+import { verifySession } from "@/lib/actions/session";
 import { Notification } from "@/lib/models";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   const pageLimit = parseInt(limit) || 20;
 
   try {
-    const { userId, isAuth } = await veryfySession();
+    const { userId, isAuth, username } = await verifySession();
 
     if (!isAuth) {
       return NextResponse.json(
@@ -26,14 +26,23 @@ export async function GET(req: NextRequest) {
     const notifications = await Notification.find({
       reciever: userId,
     })
-      .populate("sender", ["-password", "-email"])
+      .populate([
+        { path: "sender", select: ["-password", "-email"] },
+        { path: "postId", select: ["_id", "content", "images"] },
+        { path: "commentId", select: ["_id", "content"] },
+      ])
       .sort({ createdAt: -1 })
       .skip((nextPage - 1) * pageLimit)
       .limit(pageLimit);
 
-    await Notification.updateMany({ reciever: userId }, { isRead: true });
+    if (notifications.some(({ isRead }) => !isRead)) {
+      await Notification.updateMany({ reciever: userId }, { isRead: true });
+    }
 
-    return NextResponse.json({ success: true, notifications }, { status: 200 });
+    return NextResponse.json(
+      { success: true, notifications, username },
+      { status: 200 },
+    );
   } catch (error) {
     console.log("[GET_NOTIFICATION_ERROR]:", error);
     return NextResponse.json(

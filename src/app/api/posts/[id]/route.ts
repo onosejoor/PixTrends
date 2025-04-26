@@ -1,4 +1,4 @@
-import { veryfySession } from "@/lib/actions/session";
+import { verifySession } from "@/lib/actions/session";
 import { Post } from "@/lib/models";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -7,7 +7,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { isAuth, userId } = await veryfySession();
+    const { isAuth, userId } = await verifySession();
 
     const id = (await params).id;
 

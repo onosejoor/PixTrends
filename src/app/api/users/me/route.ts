@@ -1,10 +1,10 @@
-import { veryfySession } from "@/lib/actions/session";
+import { verifySession } from "@/lib/actions/session";
 import { Notification } from "@/lib/models";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const { isAuth, userId, username } = await veryfySession();
+    const { isAuth, userId, username } = await verifySession();
 
     if (!isAuth) {
       return NextResponse.json(

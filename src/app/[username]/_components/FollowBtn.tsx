@@ -78,5 +78,9 @@ export default function FollowBtn({
     );
   }
 
-  return null;
+  return (
+    <button className={generalClassname} disabled={isPending}>
+      {isPending ? "Unfollow" : "Follow"}
+    </button>
+  );
 }

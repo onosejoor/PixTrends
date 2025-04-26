@@ -5,6 +5,7 @@ import useSWR from "swr";
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
 import PostCards from "./posts/PostCards";
+import PostsError from "./posts/error";
 
 dayjs.extend(relativeTime);
 
@@ -19,7 +20,10 @@ type APIResponse = {
 export default function HomePagePosts() {
   const { data, error, isLoading } = useSWR<APIResponse>("/api/posts", fetcher);
 
-  if (error) return <div>Failed to load</div>;
+  if (error) {
+    return <PostsError />;
+  }
+  
   if (isLoading)
     return (
       <section className="divide-accent divide-y">
@@ -37,4 +41,3 @@ export default function HomePagePosts() {
     </section>
   );
 }
-

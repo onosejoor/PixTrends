@@ -1,4 +1,4 @@
-import { veryfySession } from "@/lib/actions/session";
+import { verifySession } from "@/lib/actions/session";
 import { User } from "@/lib/models";
 import { NextRequest, NextResponse } from "next/server";
 import mongoose from "mongoose";
@@ -10,7 +10,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
   const userToFollowId = (await params).id;
 
   try {
-    const { userId, isAuth } = await veryfySession();
+    const { userId, isAuth } = await verifySession();
 
     if (!isAuth) {
       return NextResponse.json(
@@ -86,7 +86,7 @@ export async function DELETE(req: NextRequest, { params }: Params) {
   const userToUnfollowId = (await params).id;
 
   try {
-    const { userId, isAuth } = await veryfySession();
+    const { userId, isAuth } = await verifySession();
 
     if (!isAuth) {
       return NextResponse.json(

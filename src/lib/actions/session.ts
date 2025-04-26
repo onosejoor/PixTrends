@@ -25,7 +25,7 @@ export async function createSession({ userId, username }: SessionPayload) {
   });
 }
 
-export async function veryfySession() {
+export async function verifySession() {
   const cookie = (await cookies()).get("pixtrends_session")?.value;
 
   if (!cookie) return { isAuth: false, message: "user not authenticated" };

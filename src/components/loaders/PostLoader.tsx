@@ -12,7 +12,7 @@ export default function PostLoader() {
 
 const LoaderCard = () => (
   <article className="sm:p-10">
-    <div className="xsm:shadow-post-card shadow-light-gray/50 xs:rounded-[10px] grid h-fit w-full gap-6 bg-white p-5 shadow-none md:max-w-[700px]">
+    <div className=" xs:rounded-[10px] grid h-fit w-full gap-6 bg-white p-5 shadow-none md:max-w-[700px]">
       <div className="flex items-start gap-5">
         <Skeleton className="size-12.5" />
         <div className="grid h-fit gap-1">

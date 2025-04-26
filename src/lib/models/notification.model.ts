@@ -6,6 +6,7 @@ interface INotification {
   type: string;
   isRead: boolean;
   postId: Types.ObjectId;
+  commentId: Types.ObjectId;
 }
 
 const notificationSchema = new Schema<INotification>(
@@ -26,7 +27,17 @@ const notificationSchema = new Schema<INotification>(
       required: false,
       default: null,
     },
-    type: { type: String, required: true, alias: ["like", "follow", "reply", "comment"] },
+    commentId: {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+      required: false,
+      default: null,
+    },
+    type: {
+      type: String,
+      required: true,
+      enum: ["like", "follow", "reply", "comment"],
+    },
     isRead: { type: Boolean, required: false, default: false },
   },
   {
@@ -34,7 +45,8 @@ const notificationSchema = new Schema<INotification>(
   },
 );
 
-notificationSchema.index({ reciever: -1 });
+notificationSchema.index({ reciever: 1, createdAt: -1 });
+notificationSchema.index({ commentId: 1 });
 
 const Notification: Model<INotification> =
   mongoose.models?.Notification ||

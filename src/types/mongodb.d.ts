@@ -49,7 +49,8 @@ declare global {
     sender: Omit<IUser, "password" | "email">;
     reciever: Omit<IUser, "password" | "email">;
     type: "like" | "follow" | "reply" | "comment";
-    postId: string | null;
+    postId: IPost | null;
+    commentId: IComment | null;
     isRead: boolean;
   }
 }

@@ -1,4 +1,4 @@
-import { veryfySession } from "@/lib/actions/session";
+import { verifySession } from "@/lib/actions/session";
 import { NextRequest, NextResponse } from "next/server";
 import {
   addUserToOnlineUsers,
@@ -7,7 +7,7 @@ import {
 
 export async function GET(req: NextRequest) {
   try {
-    const { userId, isAuth } = await veryfySession();
+    const { userId, isAuth } = await verifySession();
 
     if (!isAuth) {
       return NextResponse.json(
@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
 
 // export async function POST(req: NextRequest) {
 //   try {
-//     const { userId, isAuth } = await veryfySession();
+//     const { userId, isAuth } = await verifySession();
 
 //     if (!isAuth) {
 //       return NextResponse.json(

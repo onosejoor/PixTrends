@@ -1,4 +1,4 @@
-import { veryfySession } from "@/lib/actions/session";
+import { verifySession } from "@/lib/actions/session";
 import { Post, User } from "@/lib/models";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
   const docLimit = parseInt(limit) || 10;
 
   try {
-    const { userId, isAuth } = await veryfySession();
+    const { userId, isAuth } = await verifySession();
 
     if (!isAuth) {
       return NextResponse.json(

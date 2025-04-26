@@ -1,4 +1,4 @@
-import { veryfySession } from "@/lib/actions/session";
+import { verifySession } from "@/lib/actions/session";
 import { Post, User } from "@/lib/models";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -8,7 +8,7 @@ type Params = {
 
 export async function GET(req: NextRequest, { params }: Params) {
   try {
-    const { isAuth, userId } = await veryfySession();
+    const { isAuth, userId } = await verifySession();
     const username = (await params).username;
     const searchParams = req.nextUrl.searchParams;
 

@@ -9,6 +9,7 @@ import PostLoader from "@/components/loaders/PostLoader";
 import EmptyState from "@/components/empty-states/PostEmptyState";
 
 import PostCards from "../../_components/posts/PostCards";
+import PostsError from "@/app/_components/posts/error";
 
 dayjs.extend(relativeTime);
 
@@ -32,7 +33,7 @@ export default function UserPosts({ username, isUser }: Props) {
   );
 
   if (error) {
-    return <p>error getting posts</p>;
+    return <PostsError />;
   }
 
   if (isLoading) {

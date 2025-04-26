@@ -11,6 +11,7 @@ import LikeSection from "@/app/[username]/_components/LikeSection";
 import CommentSection from "@/app/_components/comments/Comment";
 import DynamicPostLoader from "@/components/loaders/DynamicPostLoader";
 import Link from "next/link";
+import PostsError from "@/app/_components/posts/error";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -39,7 +40,7 @@ export default function PostPage({ postId }: { postId: string }) {
   );
 
   if (error) {
-    return <p>error...</p>;
+    return <PostsError />;
   }
 
   if (isLoading) {

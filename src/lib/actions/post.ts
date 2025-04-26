@@ -2,11 +2,11 @@
 
 import { Post } from "../models";
 import { sendNotification } from "./notification";
-import { veryfySession } from "./session";
+import { verifySession } from "./session";
 
 export async function likePost(postId: string) {
   try {
-    const { isAuth, userId } = await veryfySession();
+    const { isAuth, userId } = await verifySession();
 
     if (!isAuth) {
       return { success: false, message: "Unauthorized!" };
@@ -33,6 +33,7 @@ export async function likePost(postId: string) {
       sendNotification({
         reciever: findPost.user._id.toString(),
         type: "like",
+        postId: findPost.id,
       });
     }
 

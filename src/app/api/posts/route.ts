@@ -1,10 +1,10 @@
-import { veryfySession } from "@/lib/actions/session";
+import { verifySession } from "@/lib/actions/session";
 import { Post } from "@/lib/models";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    const { userId } = await veryfySession();
+    const { userId } = await verifySession();
     const searchParams = req.nextUrl.searchParams;
 
     const { page, limit } = Object.fromEntries(searchParams.entries()) as {
@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { isAuth, userId, username } = await veryfySession();
+    const { isAuth, userId, username } = await verifySession();
 
     if (!isAuth) {
       return NextResponse.json(
