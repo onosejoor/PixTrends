@@ -10,33 +10,64 @@ export const showNotification = () => {
 
 export default function NotificationHandler() {
   useEffect(() => {
-    const connectToSSE = () => {
-      const eventSource = new EventSource(`/api/notifications/stream`);
+    let eventSource: EventSource | null = null;
 
-      eventSource.onmessage = () => {
-        const isOnNotificationsPage =
-          window.location.pathname === "/notifications";
+    const connectToSSE = async (attempt = 0) => {
+      try {
+        const response = await fetch("/api/notifications/stream", {
+          method: "GET",
+        });
 
-        if (isOnNotificationsPage) {
-          mutate("/api/notifications");
+        if (!response.ok) {
+          console.log(`Failed to connect to SSE. Status: ${response.status}`);
+          return;
         }
 
-        showNotification(); 
-      };
+        eventSource = new EventSource(`/api/notifications/stream`);
 
-      eventSource.onerror = () => {
-        console.log("Error with SSE connection. Retrying in 5 seconds...");
-        eventSource.close();
-        setTimeout(connectToSSE, 5000);
-      };
+        eventSource.onmessage = () => {
+          const isOnNotificationsPage =
+            window.location.pathname === "/notifications";
 
-      return eventSource;
+          if (isOnNotificationsPage) {
+            eventEmitter.emit("reset");
+            mutate("/api/notifications");
+          }
+
+          showNotification();
+        };
+
+        eventSource.onerror = (error) => {
+          console.error("SSE connection error:", error);
+          eventSource?.close();
+
+          if (attempt < 3) {
+            console.log(
+              `Retrying SSE connection in 5 seconds... Attempt ${attempt + 1}`,
+            );
+            setTimeout(() => connectToSSE(attempt + 1), 5000);
+          } else {
+            console.log("Max retries reached. Giving up on SSE connection.");
+          }
+        };
+      } catch (err) {
+        console.error("Unexpected error while connecting to SSE:", err);
+
+        if (attempt < 3) {
+          console.log(
+            `Retrying SSE connection in 5 seconds... Attempt ${attempt + 1}`,
+          );
+          setTimeout(() => connectToSSE(attempt + 1), 5000);
+        } else {
+          console.log("Max retries reached. Giving up on SSE connection.");
+        }
+      }
     };
 
-    const eventSource = connectToSSE();
+    connectToSSE();
 
     return () => {
-      eventSource.close();
+      eventSource?.close();
     };
   }, []);
 

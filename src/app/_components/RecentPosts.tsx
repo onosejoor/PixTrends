@@ -24,12 +24,16 @@ type APIResponse = {
 export function RecentPosts() {
   const path = usePathname();
 
-  const isProtectedRoute = protectedRoutes.some((route) => route === path);
+  const options = {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  };
 
-  const { isLoading, data, error } = useSWR<APIResponse>(
-    isProtectedRoute ? null : "/api/recents",
-    fetcher,
-  );
+  const isProtectedRoute = protectedRoutes.some((route) => route === path);
+  const url = isProtectedRoute ? null : "/api/recents";
+
+  const { isLoading, data, error } = useSWR<APIResponse>(url, fetcher, options);
 
   if (isProtectedRoute) {
     return;

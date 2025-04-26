@@ -56,8 +56,6 @@ export default function SignInForm() {
       (key) => !formData[key as keyof IFormData].trim(),
     );
 
-    console.log(isEmpty);
-
     if (isEmpty) {
       showToast({
         variants: "error",

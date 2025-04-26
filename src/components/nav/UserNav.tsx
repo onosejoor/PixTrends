@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import useSWR from "swr";
+import useSWR, { SWRConfiguration } from "swr";
 import Spinner from "../loaders/Spinner";
 import {
   CreateIcon,
@@ -12,7 +12,7 @@ import {
 } from "../Icons";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { eventEmitter } from "@/lib/eventEmitter";
 
 const fetcher = async (url: string) => axios.get(url).then((res) => res.data);
@@ -25,31 +25,53 @@ type ApiResponse = {
   unreadNotifications: number;
 };
 
+const options: SWRConfiguration = {
+  revalidateIfStale: false,
+  revalidateOnFocus: false,
+  revalidateOnReconnect: false,
+};
+
 export default function UserNavComp() {
   const { data, isLoading, error } = useSWR<ApiResponse>(
     "/api/users/me",
     fetcher,
+    options,
   );
   const [notificationCount, setNotificationCount] = useState(0);
 
   const path = usePathname();
   const notificationActive = "/notifications" === path;
 
+  const username = data?.username || "";
+
+  const userLinks = useMemo(
+    () => [
+      { name: "Create", href: "/create", icon: <CreateIcon /> },
+      { name: "Profile", href: `/${username}`, icon: <ProfileIcon /> },
+    ],
+    [username],
+  );
+
   useEffect(() => {
-    const listener = (data: { message: string }) => {
-      console.log(data.message);
+    setNotificationCount(data?.unreadNotifications || 0);
+
+    const notificationListener = () => {
       setNotificationCount((prev) => prev + 1);
     };
-    eventEmitter.on("notification", listener);
+    const resetListener = () => {
+      setNotificationCount(0);
+    };
+
+    eventEmitter.on("notification", notificationListener);
+    eventEmitter.on("reset", resetListener);
 
     return () => {
-      eventEmitter.off("notification", listener);
+      eventEmitter.off("notification", notificationListener);
+      eventEmitter.off("reset", resetListener);
     };
-  }, []);
+  }, [data]);
 
   if (error) {
-    console.log(error);
-
     if (error.status === 401) {
       return <AuthLinks path={path} />;
     }
@@ -60,15 +82,7 @@ export default function UserNavComp() {
     return <Spinner />;
   }
 
-  const { username, unreadNotifications } = data!;
-
-  const isUnread = unreadNotifications > 0 || notificationCount > 0;
-
-  const userLinks = [
-    { name: "Create", href: "/create", icon: <CreateIcon /> },
-
-    { name: "Profile", href: `/${username}`, icon: <ProfileIcon /> },
-  ];
+  const isUnread = notificationCount > 0;
 
   return (
     <>
@@ -145,11 +159,10 @@ const AuthLinks = ({ path }: { path: string }) => {
             {isActive && (
               <div className="bg-accent xsm:hidden block h-1 w-1 rounded-full"></div>
             )}
-         </div>     
+          </div>
           <span className="group-data-[active=true]:text-foreground text-gray hidden font-medium md:block">
             {name}
           </span>
-      
         </Link>
       </li>
     );
