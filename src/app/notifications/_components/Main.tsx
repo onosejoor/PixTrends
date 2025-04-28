@@ -42,7 +42,7 @@ export default function NotificationsPage() {
     return () => {
       eventEmitter.off("notification", notificationListener);
     };
-  }, [data, mutate]);
+  }, [mutate]);
 
   if (error) {
     return <NotificationsError />;

@@ -40,7 +40,11 @@ export function RecentPosts() {
   }
 
   if (error) {
-    return <p>error...</p>;
+    return (
+      <div className="hidden lg:block">
+        <p>error...</p>;
+      </div>
+    );
   }
 
   if (isLoading) {
