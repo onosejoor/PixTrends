@@ -18,7 +18,7 @@ export default function Img({ className, src, alt, ...props }: Props) {
       {loading && (
         <div
           className={cx(
-            "bg-light-gray animate-pulse rounded-[10px] backdrop-brightness-0",
+            "bg-light-gray animate-pulse border-2 border-transparent rounded-[10px] backdrop-blur-md",
             className,
           )}
         ></div>

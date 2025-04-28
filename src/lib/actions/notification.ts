@@ -1,14 +1,21 @@
 "use server";
 
+import axios from "axios";
 import { Notification } from "../models";
 import { verifySession } from "./session";
-import { onlineUsers } from "@/app/api/notifications/stream/online_users";
+
+const SERVER_URL = process.env.SERVER_URL!;
 
 type NotificationProps = {
   reciever: string;
   type: INotification["type"];
   postId?: string;
   commentId?: string;
+};
+
+type ApiResponse = {
+  success: boolean;
+  message: string;
 };
 
 export async function sendNotification({
@@ -20,22 +27,19 @@ export async function sendNotification({
   try {
     const { userId } = await verifySession();
 
-    const notification = new Notification({
+    const payload = {
       reciever,
       sender: userId,
       type,
       postId,
       commentId,
-    });
+    };
 
-    await notification.save();
+    const sendPayload = await axios.post<ApiResponse>(SERVER_URL, payload);
 
-    const controller = onlineUsers.get(reciever);
-    if (controller) {
-      controller.enqueue(`data: ${JSON.stringify(notification)}\n\n`);
-    }
+    const { success, message } = sendPayload.data;
 
-    return { success: true, message: "Notification sent" };
+    return { success, message };
   } catch (error) {
     console.log("[SEND_NOTIFICATION_ERROR]: ", error);
 

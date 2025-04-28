@@ -78,7 +78,7 @@ export default function UserHeader({
             <StatBlock label="Following" count={following.length} />
           </div>
 
-          <p className="text-gray text-sm">
+          <p className="text-secondary whitespace-break-spaces">
             {bio || "This user has not created a bio yet."}
           </p>
         </div>

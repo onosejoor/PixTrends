@@ -8,6 +8,7 @@ import useSWR from "swr";
 import NotificationLoader from "@/components/loaders/NotificationLoader";
 import NotificationCard from "./NotificationCard";
 import NotificationsError from "./notification-error";
+import { eventEmitter } from "@/lib/eventEmitter";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -32,21 +33,16 @@ export default function NotificationsPage() {
   }, [data]);
 
   useEffect(() => {
-    const eventSource = new EventSource("/api/notifications/stream");
-
-    eventSource.onmessage = () => {
+    const notificationListener = () => {
       mutate();
     };
 
-    eventSource.onerror = () => {
-      console.log("Error with SSE connection.");
-      eventSource.close();
-    };
+    eventEmitter.on("notification", notificationListener);
 
     return () => {
-      eventSource.close();
+      eventEmitter.off("notification", notificationListener);
     };
-  }, [mutate]);
+  }, [data, mutate]);
 
   if (error) {
     return <NotificationsError />;

@@ -1,5 +1,6 @@
 "use client";
 
+import { checkSSE } from "@/lib/actions/sse";
 import { eventEmitter } from "@/lib/eventEmitter";
 import { useEffect } from "react";
 import { mutate } from "swr";
@@ -14,27 +15,25 @@ export default function NotificationHandler() {
 
     const connectToSSE = async (attempt = 0) => {
       try {
-        const response = await fetch("/api/notifications/stream", {
-          method: "GET",
-        });
+        const { success, url, code } = await checkSSE();
 
-        if (!response.ok) {
-          console.log(`Failed to connect to SSE. Status: ${response.status}`);
+        if (!success || !url) {
+          console.log(`Failed to connect to SSE. Status: ${code}`);
           return;
         }
+        eventSource = new EventSource(url);
 
-        eventSource = new EventSource(`/api/notifications/stream`);
+        console.log("connected");
 
         eventSource.onmessage = () => {
           const isOnNotificationsPage =
             window.location.pathname === "/notifications";
 
           if (isOnNotificationsPage) {
-            eventEmitter.emit("reset");
             mutate("/api/notifications");
+          } else {
+            showNotification();
           }
-
-          showNotification();
         };
 
         eventSource.onerror = (error) => {
