@@ -16,7 +16,7 @@ type ServerResponse = {
 type CommentProps = {
   parentId?: string | null;
   postId: string;
-  user: IUser;
+  user: IUserPreview;
   reply?: boolean;
 };
 

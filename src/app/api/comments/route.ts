@@ -76,9 +76,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const getPost = await Post.findById(postId).populate<{ user: IUser }>(
-      "user",
-    );
+    const getPost = await Post.findById(postId);
 
     if (!getPost) {
       return NextResponse.json(
@@ -112,7 +110,7 @@ export async function POST(req: NextRequest) {
 
       if (!getPost.user._id.equals(userId as string)) {
         await sendNotification({
-          reciever: getPost.user._id.toString(),
+          receiver: getPost.user._id.toString(),
           type: "comment",
           postId,
           commentId: newComment[0].id,

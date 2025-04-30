@@ -11,25 +11,19 @@ import ProfileError from "../error";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-type Status =
-  | "unauthenticated"
-  | "self"
-  | "following"
-  | "notFollowing"
-  | "error";
+type Status = "self" | "following" | "notFollowing";
 
 type APIResponse = {
   success: boolean;
   user: IUser;
 };
 
-export default function UserHeader({
-  username,
-  status,
-}: {
+type Props = {
   username: string;
   status: Status;
-}) {
+};
+
+export default function UserHeader({ username, status }: Props) {
   const { data, isLoading, error, mutate } = useSWR<APIResponse>(
     `/api/users/${username}`,
     fetcher,
@@ -43,12 +37,12 @@ export default function UserHeader({
 
   const { user } = data!;
   const { avatar, name, following, followers, bio, _id } = user;
-  
+
   const randomBg = Math.ceil(Math.random() * 20);
   const backgroundClass = backgrounds[randomBg]?.class;
 
   return (
-    <section className="fade-in w-full">
+    <section className="w-full">
       <div
         className={cx(
           "opacity/70 h-37.5 w-full rounded-br-[10px] rounded-bl-[10px] p-5 sm:h-[200px]",

@@ -35,12 +35,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   };
 }
 
-type Status =
-  | "unauthenticated"
-  | "self"
-  | "following"
-  | "notFollowing"
-  | "error";
+type Status = "self" | "following" | "notFollowing";
 
 async function checkIsUser(
   username: string,
@@ -50,7 +45,7 @@ async function checkIsUser(
     const { isAuth, username: authUsername, userId } = await verifySession();
 
     if (!isAuth) {
-      return { status: "unauthenticated" };
+      return { status: "notFollowing" };
     }
 
     if (username === authUsername) {
@@ -61,18 +56,10 @@ async function checkIsUser(
       uid.equals(userId as string),
     );
 
-    switch (isFollowing) {
-      case true:
-        return { status: "following" };
-      case false:
-        return { status: "notFollowing" };
-
-      default:
-        return { status: "notFollowing" };
-    }
+    return { status: isFollowing ? "following" : "notFollowing" };
   } catch (error) {
     console.log("[CHECK_IS_USER_ERROR]: ", error);
-    return { status: "error" };
+    return { status: "notFollowing" };
   }
 }
 

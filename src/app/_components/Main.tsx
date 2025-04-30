@@ -14,7 +14,6 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 type APIResponse = {
   success: boolean;
   posts: IPost[];
-  userId: string;
 };
 
 export default function HomePagePosts() {
@@ -23,7 +22,7 @@ export default function HomePagePosts() {
   if (error) {
     return <PostsError />;
   }
-  
+
   if (isLoading)
     return (
       <section className="divide-accent divide-y">
@@ -31,12 +30,12 @@ export default function HomePagePosts() {
       </section>
     );
 
-  const { posts, userId } = data!;
+  const { posts } = data!;
 
   return (
     <section className="divide-accent divide-y">
       {posts.map((post, index) => (
-        <PostCards key={index} post={post} userId={userId} />
+        <PostCards key={index} post={post} />
       ))}
     </section>
   );

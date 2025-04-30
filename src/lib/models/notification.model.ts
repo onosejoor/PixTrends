@@ -2,7 +2,7 @@ import mongoose, { Model, model, Schema, Types } from "mongoose";
 
 interface INotification {
   sender: Types.ObjectId;
-  reciever: Types.ObjectId;
+  receiver: Types.ObjectId;
   type: string;
   isRead: boolean;
   postId: Types.ObjectId;
@@ -11,7 +11,7 @@ interface INotification {
 
 const notificationSchema = new Schema<INotification>(
   {
-    reciever: {
+    receiver: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -45,7 +45,7 @@ const notificationSchema = new Schema<INotification>(
   },
 );
 
-notificationSchema.index({ reciever: 1, createdAt: -1 });
+notificationSchema.index({ receiver: 1, createdAt: -1 });
 notificationSchema.index({ commentId: 1 });
 
 const Notification: Model<INotification> =

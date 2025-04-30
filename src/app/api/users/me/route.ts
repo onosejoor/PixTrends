@@ -21,7 +21,7 @@ export async function GET() {
     }
 
     const unreadNotifications = await Notification.countDocuments({
-      reciever: userId,
+      receiver: userId,
       isRead: false,
     });
 

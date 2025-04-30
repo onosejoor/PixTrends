@@ -2,7 +2,7 @@
 
 import { copyToClipboard, cx } from "@/components/utils";
 import { likePost } from "@/lib/actions/post";
-import { MessageSquare, Share2 } from "lucide-react";
+import { ChartNoAxesColumn, MessageSquare, Share2 } from "lucide-react";
 import { Types } from "mongoose";
 import { useState } from "react";
 import { FiHeart } from "react-icons/fi";
@@ -19,9 +19,10 @@ export default function LikeSection({
   likes,
   userId,
   postId,
-  comments, link
+  comments,
+  link,
 }: Props) {
-  const isLiked = likes.some((id) => id.toString() === userId);
+  const isLiked = !!likes?.find((like) => like._id?.equals(userId));
 
   const [like, setLike] = useState(isLiked);
   const [likeCount, setLikeCount] = useState(likes.length);
@@ -34,7 +35,7 @@ export default function LikeSection({
   };
 
   return (
-    <div className="relative z-5 flex items-center gap-7.5">
+    <div className="relative z-5 flex items-center gap-12.5">
       <div
         role="button"
         onClick={handleClick}
@@ -54,6 +55,12 @@ export default function LikeSection({
       <div className="flex items-center gap-1.5">
         <div className="group hover:bg-accent/10 grid place-items-center rounded-full p-2">
           <MessageSquare className="stroke-gray group-hover:stroke-accent size-5" />
+        </div>
+        <span className="text-secondary -ml-2">{comments}</span>
+      </div>
+      <div className="flex items-center gap-1.5">
+        <div className="group hover:bg-accent/10 grid place-items-center rounded-full p-2">
+          <ChartNoAxesColumn className="stroke-gray group-hover:stroke-accent size-5" />
         </div>
         <span className="text-secondary -ml-2">{comments}</span>
       </div>

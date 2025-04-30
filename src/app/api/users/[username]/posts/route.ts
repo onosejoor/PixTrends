@@ -20,7 +20,7 @@ export async function GET(req: NextRequest, { params }: Params) {
     const nextPage = Number(page) || 1;
     const limitValue = Number(limit) || 10;
 
-    const checkUser = await User.findOne({ username });
+    const checkUser = await User.exists({ username });
 
     if (!checkUser) {
       return NextResponse.json(
@@ -29,7 +29,7 @@ export async function GET(req: NextRequest, { params }: Params) {
       );
     }
 
-    const getPost = await Post.find({ user: checkUser.id })
+    const getPost = await Post.find({ user: checkUser._id })
       .limit(limitValue)
       .skip((nextPage - 1) * limitValue)
       .sort({ createdAt: -1 })

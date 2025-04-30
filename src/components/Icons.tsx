@@ -1,7 +1,7 @@
 import { SVGProps } from "react";
 
 const className =
-  "xsm:size-7.5 size-7 group-data-[active=true]:fill-accent group-data-[active=true]:stroke-accent  xsm:group-data-[active=true]:fill-foreground xsm:group-data-[active=true]:stroke-foreground   group-hover:fill-gray group-hover:stroke-gray stroke-gray";
+  "sm:size-7.5 size-6 group-data-[active=true]:fill-accent group-data-[active=true]:stroke-accent  xsm:group-data-[active=true]:fill-foreground xsm:group-data-[active=true]:stroke-foreground   group-hover:fill-gray group-hover:stroke-gray stroke-gray";
 
 export const CancelIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -321,31 +321,6 @@ export const ProfileIcon = () => (
   </svg>
 );
 
-export const SearchIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    className={className}
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-    <g
-      id="SVGRepo_tracerCarrier"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    ></g>
-    <g id="SVGRepo_iconCarrier">
-      <path
-        d="M11 6C13.7614 6 16 8.23858 16 11M16.6588 16.6549L21 21M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
-        className={className}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      ></path>
-    </g>
-  </svg>
-);
-
 export const SignInIcon = () => (
   <svg
     viewBox="0 0 24 24"
@@ -412,6 +387,31 @@ export const SettingsIcon = () => (
       <path
         d="M4.22183e-08 -1L2 -2L3.5 -1L2 0L4.22183e-08 -1ZM22 22L20.5 23L22 24.5L23 23L22 22ZM2 24L3.5 23L2 22.5L1 23L2 24ZM22 0L20.5 -1L22 -2L23 -1L22 0Z"
         fill="#000000"
+      ></path>
+    </g>
+  </svg>
+);
+
+export const TrendingIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    className="xsm:size-7.5 group-data-[active=true]:stroke-accent xsm:group-data-[active=true]:stroke-foreground group-hover:stroke-gray stroke-gray size-7"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+    <g
+      id="SVGRepo_tracerCarrier"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    ></g>
+    <g id="SVGRepo_iconCarrier">
+      <path
+        // className={className}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="M20.5 7.5L13 15l-4-4-6 6M16 7h4.95v5"
       ></path>
     </g>
   </svg>

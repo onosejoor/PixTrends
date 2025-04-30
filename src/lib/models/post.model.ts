@@ -5,6 +5,7 @@ interface IPost {
   content: string;
   images: string[];
   likes: Types.ObjectId[];
+  views: Types.ObjectId[];
   comments: number;
   createdAt: Date;
 }
@@ -16,6 +17,14 @@ const postSchema = new Schema<IPost>(
     comments: { type: Number, required: false, default: 0 },
     images: { type: [String], required: false, default: [] },
     likes: [
+      {
+        type: Schema.Types.ObjectId,
+        required: false,
+        default: [],
+        ref: "User",
+      },
+    ],
+    views: [
       {
         type: Schema.Types.ObjectId,
         required: false,

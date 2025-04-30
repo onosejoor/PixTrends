@@ -10,7 +10,7 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const id = (await params).id;
 
-  const findUser = await Post.findById(id).populate<{ user: IUser }>("user");
+  const findUser = await Post.findById(id).populate<{ user: IUserPreview }>("user");
 
   if (!findUser) {
     return notFound();
@@ -41,6 +41,5 @@ export default async function DynamicPost({ params }: Props) {
   if (!getPost) {
     return notFound();
   }
-
   return <PostPage postId={getPost.id} />;
 }

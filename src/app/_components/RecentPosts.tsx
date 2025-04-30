@@ -9,6 +9,7 @@ import Link from "next/link";
 
 import { usePathname } from "next/navigation";
 import useSWR from "swr";
+import RecentPostsError from "./error";
 
 dayjs.extend(relativeTime);
 
@@ -40,11 +41,7 @@ export function RecentPosts() {
   }
 
   if (error) {
-    return (
-      <div className="hidden lg:block">
-        <p>error...</p>;
-      </div>
-    );
+    return <RecentPostsError />;
   }
 
   if (isLoading) {

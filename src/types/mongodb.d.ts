@@ -16,20 +16,30 @@ declare global {
     createdAt: Date;
   }
 
+  interface IUserPreview {
+    _id: Types.ObjectId;
+    name: string;
+    avatar: string;
+    bio: string;
+    username: string;
+    createdAt: Date;
+  }
+
   interface IPost {
     _id: Types.ObjectId;
-    user: IUser;
+    user: IUserPreview;
     content: string;
     images: string[];
     likes: Types.ObjectId[];
     comments: number;
     createdAt: Date;
+    views: number;
   }
 
   interface IComment {
     _id: Types.ObjectId;
     post: IPost;
-    user: IUser;
+    user: IUserPreview;
     content: string;
     replies: IComment[];
     parentId?: Types.ObjectId;
@@ -46,8 +56,8 @@ declare global {
   interface INotification {
     _id: Types.ObjectId;
     createdAt: Date;
-    sender: Omit<IUser, "password" | "email">;
-    reciever: Omit<IUser, "password" | "email">;
+    sender: IUserPreview;
+    receiver: IUserPreview;
     type: "like" | "follow" | "reply" | "comment";
     postId: IPost | null;
     commentId: IComment | null;

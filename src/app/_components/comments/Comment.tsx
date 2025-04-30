@@ -24,7 +24,7 @@ type ApiResponse = {
 };
 
 type CardProps = {
-  user: IUser;
+  user: IUserPreview;
   postId: string;
   comment: IComment;
   replyingTo: string;
@@ -37,7 +37,7 @@ export default function CommentSection({
 }: {
   postId: string;
 
-  user: IUser;
+  user: IUserPreview;
 }) {
   const { data, isLoading, error } = useSWR<ApiResponse>(
     `/api/comments?postId=${postId}`,

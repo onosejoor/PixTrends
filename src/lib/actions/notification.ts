@@ -7,7 +7,7 @@ import { verifySession } from "./session";
 const SERVER_URL = process.env.SERVER_URL!;
 
 type NotificationProps = {
-  reciever: string;
+  receiver: string;
   type: INotification["type"];
   postId?: string;
   commentId?: string;
@@ -19,7 +19,7 @@ type ApiResponse = {
 };
 
 export async function sendNotification({
-  reciever,
+  receiver,
   type,
   postId,
   commentId,
@@ -28,7 +28,7 @@ export async function sendNotification({
     const { userId } = await verifySession();
 
     const payload = {
-      reciever,
+      receiver,
       sender: userId,
       type,
       postId,

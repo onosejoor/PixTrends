@@ -56,7 +56,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
       await session.commitTransaction();
       session.endSession();
 
-      await sendNotification({ reciever: userToFollowId, type: "follow" });
+      await sendNotification({ receiver: userToFollowId, type: "follow" });
 
       return NextResponse.json(
         {

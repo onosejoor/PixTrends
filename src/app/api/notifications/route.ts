@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     }
 
     const notifications = await Notification.find({
-      reciever: userId,
+      receiver: userId,
     })
       .populate([
         { path: "sender", select: ["-password", "-email"] },
@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
       .limit(pageLimit);
 
     if (notifications.some(({ isRead }) => !isRead)) {
-      await Notification.updateMany({ reciever: userId }, { isRead: true });
+      await Notification.updateMany({ receiver: userId }, { isRead: true });
     }
 
     return NextResponse.json(

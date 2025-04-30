@@ -12,14 +12,15 @@ export async function likePost(postId: string) {
       return { success: false, message: "Unauthorized!" };
     }
 
-    const findPost = await Post.findById(postId).populate("user");
+    const findPost = await Post.findById(postId);
 
     if (!findPost) {
       return { success: false, message: "No Post found!" };
     }
 
     const isLiked = findPost?.likes.some((id) => id.toString() === userId);
-    const isUser = findPost.user.id === userId;
+    
+    const isUser = findPost.user.equals(userId as string);
 
     const update = isLiked
       ? { $pull: { likes: userId } }
@@ -31,7 +32,7 @@ export async function likePost(postId: string) {
 
     if (!isLiked && !isUser) {
       sendNotification({
-        reciever: findPost.user._id.toString(),
+        receiver: findPost.user._id.toString(),
         type: "like",
         postId: findPost.id,
       });
