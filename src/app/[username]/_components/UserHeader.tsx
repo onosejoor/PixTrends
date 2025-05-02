@@ -45,7 +45,7 @@ export default function UserHeader({ username, status }: Props) {
     <section className="w-full">
       <div
         className={cx(
-          "opacity/70 h-25 w-full rounded-br-[10px] rounded-bl-[10px] p-5 xsm:h-[200px]",
+          "opacity/70 xsm:h-[200px] h-25 w-full rounded-br-[10px] rounded-bl-[10px] p-5",
           backgroundClass ||
             "bg-[#cc5500]/20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDIiPjwvcmVjdD4KPC9zdmc+')]",
         )}
@@ -56,20 +56,22 @@ export default function UserHeader({ username, status }: Props) {
           <Img
             src={avatar}
             alt={`${name}'s avatar`}
-            className="border-light-gray shadow-avatar size-25 xsm:size-37.5 rounded-full border-2"
+            className="border-light-gray shadow-avatar xsm:size-37.5 size-25 rounded-full border-2"
           />
           <FollowBtn status={status} mutate={mutate} userId={_id.toString()} />
         </div>
 
-        <div className="fade-in *:mb-5">
-          <div className="divide-light-gray flex gap-5 divide-x">
+        <div className="*:mb-5">
+          <div className="divide-light-gray xs:flex-row flex flex-col gap-5 xs:divide-x">
             <div className="grid gap-2 pr-5">
               <b className="text-primary text-lg">{name}</b>
               <p className="text-secondary text-sm font-medium">@{username}</p>
             </div>
 
-            <StatBlock label="Followers" count={followers.length} />
-            <StatBlock label="Following" count={following.length} />
+            <div className="flex gap-10 xs:gap-5">
+              <StatBlock label="Followers" count={followers.length} />
+              <StatBlock label="Following" count={following.length} />
+            </div>
           </div>
 
           <p className="text-secondary whitespace-break-spaces">
@@ -83,7 +85,7 @@ export default function UserHeader({ username, status }: Props) {
 
 function StatBlock({ label, count }: { label: string; count: number }) {
   return (
-    <div className="grid justify-items-center gap-1 px-5">
+    <div className="grid justify-items-center gap-1 xs:px-5">
       <b className="text-gray text-lg">{count}</b>
       <p className="text-secondary text-sm font-medium">{label}</p>
     </div>

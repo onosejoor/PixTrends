@@ -4,7 +4,7 @@ import { verifySession } from "./lib/actions/session";
 
 const protectedRoutes = [/^\/create$/, /^\/notifications$/, /^\/settings$/];
 
-const regex = /^\/api\/(cron-jobs|posts|auth|recents|discover|trending|users)/;
+const regex = /^\/api\/(cron-jobs|posts|auth|recents|discover|trending|users|comments)/;
 
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
@@ -30,7 +30,7 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     "/api/!posts",
-    "/api/((?!cron-jobs|posts|auth|recents|discover|trending|users).*)",
+    "/api/((?!cron-jobs|posts|auth|recents|discover|trending|users|comments).*)",
     "/((?!_next/static|_next/image|.*\\.png$).*)",
   ],
 };

@@ -50,9 +50,9 @@ function PostCards({ post }: Props) {
   const stopPropagation = (e: React.MouseEvent) => e.stopPropagation();
 
   return (
-    <article className="p-4 sm:p-6 md:p-8">
+    <article className="sm:p-10">
       <div
-        className="grid w-full max-w-3xl cursor-pointer gap-4 rounded-lg bg-white p-4 sm:gap-6 sm:p-5"
+        className="grid w-full max-w-3xl cursor-pointer gap-4 bg-white p-4 sm:gap-6 sm:rounded-lg sm:p-5"
         onClick={handleCardClick}
       >
         <div className="flex items-center justify-between gap-5">
@@ -89,7 +89,7 @@ function PostCards({ post }: Props) {
 
         <div className="grid gap-4">
           <div>
-            <div className="text-secondary sm:text-lg">
+            <div className="text-secondary xs:text-base text-sm sm:text-lg">
               <TextHighlighter text={displayContent} />
             </div>
 

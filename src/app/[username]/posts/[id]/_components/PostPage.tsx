@@ -91,7 +91,7 @@ const DynamicPostCard = ({ post }: Props) => {
             <p className="text-accent text-base font-medium">@{username}</p>
           </div>
         </Link>
-        <div className="text-secondary sm:text-lg">
+        <div className="text-secondary xs:text-base text-sm sm:text-lg">
           <TextHighlighter text={content} />
         </div>
 
