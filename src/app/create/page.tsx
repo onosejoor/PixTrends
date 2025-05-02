@@ -1,7 +1,17 @@
-"use client";
+import { verifySession } from "@/lib/actions/session";
+import CreatePostForm from "./_components/Form";
+import { User } from "@/lib/models";
 
-import CreatePostForm  from "../@modal/_components/Form";
+export default async function CreatePostPage() {
+  const { userId } = await verifySession();
 
-export default function CreatePostPage() {
-  return <CreatePostForm />;
+  const findUser = await User.findById(userId)
+    .select(["username", "avatar", "-_id"])
+    .lean();
+
+  if (!findUser) {
+    throw new Error("User not found!");
+  }
+
+  return <CreatePostForm user={findUser} />;
 }

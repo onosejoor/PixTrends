@@ -31,7 +31,7 @@ export default function Nav({ children }: { children: React.ReactNode }) {
             >
               <Link
                 href={href}
-                className="md:justify-start xsm:p-2 flex items-center justify-center sm:gap-3"
+                className="xsm:p-2 flex items-center justify-center sm:gap-3 md:justify-start"
               >
                 <div className="grid justify-items-center gap-1.5">
                   {icon}

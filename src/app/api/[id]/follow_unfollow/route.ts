@@ -10,14 +10,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
   const userToFollowId = (await params).id;
 
   try {
-    const { userId, isAuth } = await verifySession();
-
-    if (!isAuth) {
-      return NextResponse.json(
-        { success: false, message: "User not authorised" },
-        { status: 401 },
-      );
-    }
+    const { userId } = await verifySession();
 
     const findUsertoFollow = await User.findById(userToFollowId);
     const currentUser = await User.findById(userId);
@@ -86,14 +79,7 @@ export async function DELETE(req: NextRequest, { params }: Params) {
   const userToUnfollowId = (await params).id;
 
   try {
-    const { userId, isAuth } = await verifySession();
-
-    if (!isAuth) {
-      return NextResponse.json(
-        { success: false, message: "User not authorised" },
-        { status: 401 },
-      );
-    }
+    const { userId } = await verifySession();
 
     const findUserToUnfollow = await User.findById(userToUnfollowId);
     const currentUser = await User.findById(userId);

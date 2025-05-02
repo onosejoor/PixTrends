@@ -22,6 +22,8 @@ declare global {
     avatar: string;
     bio: string;
     username: string;
+    followers: Types.ObjectId[];
+    following: Types.ObjectId[];
     createdAt: Date;
   }
 
@@ -32,8 +34,10 @@ declare global {
     images: string[];
     likes: Types.ObjectId[];
     comments: number;
+    isLiked?: boolean;
+    isUser?: boolean;
     createdAt: Date;
-    views: number;
+    views: Types.ObjectId[];
   }
 
   interface IComment {

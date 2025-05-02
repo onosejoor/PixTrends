@@ -5,6 +5,7 @@ export async function GET() {
   try {
     const posts = await Post.aggregate([
       { $sample: { size: 3 } },
+      { $sort: { createdAt: -1 } },
       {
         $lookup: {
           from: "users",
@@ -20,7 +21,6 @@ export async function GET() {
           createdAt: 1,
           images: 1,
           "user._id": 1,
-          "user.name": 1,
           "user.username": 1,
           "user.avatar": 1,
         },

@@ -1,5 +1,7 @@
 import { verifySession } from "@/lib/actions/session";
+import { uploadImages } from "@/lib/actions/upload";
 import { Post } from "@/lib/models";
+import { Types } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -15,13 +17,52 @@ export async function GET(req: NextRequest) {
     const nextPage = Number(page) || 1;
     const limitValue = Number(limit) || 10;
 
-    const getPost = await Post.find({})
-      .populate("user", ["-password", "-email"])
-      .limit(limitValue)
-      .sort({ createdAt: -1 })
-      .skip((nextPage - 1) * limitValue);
+    const getPosts = await Post.aggregate([
+      { $sample: { size: limitValue } },
 
-    return NextResponse.json({ success: true, posts: getPost, userId });
+      {
+        $skip: (nextPage - 1) * limitValue,
+      },
+      {
+        $limit: limitValue,
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+      {
+        $addFields: {
+          isLiked: {
+            $in: [new Types.ObjectId(userId as string), "$likes"],
+          },
+          isUser: { $eq: ["$user._id", new Types.ObjectId(userId as string)] },
+        },
+      },
+      {
+        $project: {
+          content: 1,
+          createdAt: 1,
+          images: 1,
+          comments: 1,
+          isUser: 1,
+          likes: 1,
+          isLiked: 1,
+          views: 1,
+          "user._id": 1,
+          "user.username": 1,
+          "user.avatar": 1,
+        },
+      },
+    ]);
+
+    return NextResponse.json({ success: true, posts: getPosts, userId });
   } catch (error) {
     console.log("[GET_HOME_POSTS_ERROR]:", error);
 
@@ -33,6 +74,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const formData = await req.formData();
+  const text = formData.get("text");
+  const images = formData.getAll("images");
   try {
     const { isAuth, userId, username } = await verifySession();
 
@@ -43,22 +87,32 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { text, images } = (await req.json()) as {
-      text?: string;
-      images?: string[];
-    };
-
-    if (!text && !images) {
+    if (!text && images && images.length < 1) {
       return NextResponse.json(
         { success: false, message: "Either text, or images must be filled!" },
         { status: 400 },
       );
     }
 
+    let imageUrls: string[] = [];
+
+    const { success, urls, message } = await uploadImages(images as File[]);
+
+    if (!success) {
+      console.log("[POST_UPLOAD_IMAGES_ERROR]:", message);
+
+      return NextResponse.json(
+        { success: false, message: "Error uploading images!" },
+        { status: 500 },
+      );
+    }
+
+    imageUrls = urls!;
+
     const newPost = new Post({
       user: userId,
       content: text,
-      images,
+      images: imageUrls,
     });
 
     await newPost.save();
@@ -73,9 +127,22 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.log("[CREATE_NEW_POST_ERROR]:", error);
 
-    return NextResponse.json({
-      success: false,
-      message: "Internal server error",
-    });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Internal server error",
+      },
+      { status: 500 },
+    );
   }
 }
+
+/**
+ * for old code
+ */
+
+// const getPost = await Post.find({})
+//   .populate("user", ["_id", "username", "avatar"])
+//   .limit(limitValue)
+//   .sort({ createdAt: -1 })
+//   .skip((nextPage - 1) * limitValue);

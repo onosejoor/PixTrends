@@ -7,14 +7,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { userId, isAuth } = await verifySession();
-
-    if (!isAuth) {
-      return NextResponse.json(
-        { success: false, message: "Unauthorised" },
-        { status: 401 },
-      );
-    }
+    const { userId } = await verifySession();
 
     const deleteId = (await params).id;
 

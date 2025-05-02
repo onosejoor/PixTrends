@@ -1,0 +1,65 @@
+"use client";
+
+import PostsError from "@/app/_components/posts/error";
+import PostCards from "@/app/_components/posts/PostCards";
+import PostLoader from "@/components/loaders/PostLoader";
+import axios from "axios";
+import { ChartNoAxesColumnIncreasing } from "lucide-react";
+import useSWR, { SWRConfiguration } from "swr";
+
+const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+
+type APIResponse = {
+  success: boolean;
+  posts: IPost[];
+};
+
+export const swrOptions: SWRConfiguration = {
+  revalidateIfStale: false,
+  revalidateOnFocus: false,
+  revalidateOnReconnect: false,
+  refreshWhenHidden: false,
+};
+
+export default function TrendingPosts() {
+  const { data, error, isLoading } = useSWR<APIResponse>(
+    "/api/trending/posts",
+    fetcher,
+    swrOptions,
+  );
+
+  if (error) {
+    return <PostsError />;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="grid gap-5">
+        <div className="flex items-center gap-2 px-6">
+          <ChartNoAxesColumnIncreasing size={20} className="text-accent" />
+          <h3 className="text-primary text-lg font-semibold">Trending Posts</h3>
+        </div>
+        <PostLoader />
+      </div>
+    );
+  }
+
+  const { posts } = data!;
+
+  return (
+    <section className="grid py-5">
+      <div className="flex items-center gap-2 px-6">
+        <ChartNoAxesColumnIncreasing size={20} className="text-accent" />
+        <h3 className="text-primary text-lg font-semibold">Trending Posts</h3>
+      </div>
+
+      <div className="divide-accent grid gap-5 divide-y">
+        {posts.map((post, index) => (
+          <div key={index} className="py-5">
+            <PostCards post={post} />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}

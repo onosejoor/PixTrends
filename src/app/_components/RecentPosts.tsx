@@ -75,7 +75,7 @@ const PostCards = ({ content, user, createdAt, _id }: IPost) => {
             <Img
               src={user.avatar}
               className="size-7.5 rounded-full"
-              alt={user.name}
+              alt={user.username}
             />
             <div className="grid h-fit gap-1">
               <h2 className="text-primary text-base font-semibold">

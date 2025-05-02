@@ -8,10 +8,12 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import Img from "@/components/Img";
 import { cx } from "@/components/utils";
 import LikeSection from "@/app/[username]/_components/LikeSection";
+import PostCardModal from "./modal";
+import TextHighlighter from "@/app/create/_components/TextHighlighter";
 
 dayjs.extend(relativeTime);
 
-const imageClass = {
+const imageClass: Record<number, string> = {
   "1": "max-w-full",
   "2": "max-w-[300px]",
   "3": "max-w-[200px]",
@@ -20,74 +22,100 @@ const imageClass = {
 
 type Props = {
   post: IPost;
-  userId: string | null;
 };
 
-const PostCards = ({ post, userId }: Props) => {
-  const { user, content, images, likes, comments, createdAt, _id } = post;
+function PostCards({ post }: Props) {
+  const {
+    user,
+    content,
+    images,
+    likes,
+    views,
+    comments,
+    createdAt,
+    _id,
+    isLiked,
+    isUser,
+  } = post;
+
   const router = useRouter();
+
+  const postUrl = `${window.location.origin}/${user.username}/posts/${_id}`;
 
   const isLengthy = images.length > 0 && content.length > 150;
 
-  const truncateText = isLengthy ? `${content.slice(0, 150)}...` : content;
+  const displayContent = isLengthy ? `${content.slice(0, 150)}...` : content;
 
-  const handleStopPropagation = (e: React.MouseEvent) => e.stopPropagation();
-
-  const link = `${window.location.origin}/${user.username}/posts/${_id}`;
+  const handleCardClick = () => router.push(postUrl);
+  const stopPropagation = (e: React.MouseEvent) => e.stopPropagation();
 
   return (
-    <article className="sm:p-10">
+    <article className="p-4 sm:p-6 md:p-8">
       <div
-        className="grid h-fit w-full cursor-pointer gap-6 bg-white p-5 shadow-none sm:rounded-[10px] md:max-w-[700px]"
-        onClick={() => router.push(link)}
+        className="grid w-full max-w-3xl cursor-pointer gap-4 rounded-lg bg-white p-4 sm:gap-6 sm:p-5"
+        onClick={handleCardClick}
       >
-        <Link href={`/${user.username}`} onClick={handleStopPropagation}>
-          <div className="flex items-start gap-5">
-            <Img
-              src={user.avatar}
-              className="size-12.5 rounded-full"
-              alt="user"
-            />
-            <div className="grid h-fit gap-1">
-              <div className="text-primary font-semibold hover:underline">
-                {user.username}
+        <div className="flex items-center justify-between gap-5">
+          <Link
+            className="w-fit"
+            href={`/${user.username}`}
+            onClick={stopPropagation}
+          >
+            <div className="flex items-start gap-4">
+              <Img
+                src={user.avatar}
+                className="h-12 w-12 rounded-full object-cover"
+                alt={`${user.username}'s avatar`}
+              />
+              <div className="grid gap-1">
+                <span className="text-primary font-semibold hover:underline">
+                  {user.username}
+                </span>
+                <time className="text-accent text-sm">
+                  {dayjs(createdAt).fromNow()}
+                </time>
               </div>
-              <time className="text-accent font-medium">
-                {dayjs(createdAt).fromNow()}
-              </time>
             </div>
+          </Link>
+
+          <div onClick={stopPropagation}>
+            <PostCardModal
+              isUser={isUser}
+              postId={_id.toString()}
+              username={user.username}
+            />
           </div>
-        </Link>
-        <div className="grid gap-6">
+        </div>
+
+        <div className="grid gap-4">
           <div>
-            <p className="text-gray whitespace-break-spaces">{truncateText}</p>
+            <div className="text-secondary sm:text-lg">
+              <TextHighlighter text={displayContent} />
+            </div>
+
             {(isLengthy || content.length > 500) && (
               <Link
-                href={`/${user.username}/posts/${_id}`}
+                href={postUrl}
                 className="text-accent text-sm underline"
+                onClick={stopPropagation}
               >
-                See-more
+                See more
               </Link>
             )}
           </div>
 
           {images.length > 0 && (
-            <div className="no-scrollbar flex h-[250px] gap-5 overflow-x-scroll">
+            <div className="no-scrollbar flex h-64 gap-4 overflow-x-auto">
               {images.map((image, index) => (
                 <picture
-                  key={index}
-                  className={cx(
-                    "w-full shrink-0",
-                    imageClass[
-                      images.length.toString() as keyof typeof imageClass
-                    ],
-                  )}
-                  onClick={handleStopPropagation}
+                  key={`${_id}-${index}`}
+                  className={cx("w-full shrink-0", imageClass[images.length])}
+                  onClick={stopPropagation}
                 >
                   <Img
                     src={image}
-                    className="h-full w-full rounded-[10px] object-cover"
-                    alt={`img-${index}`}
+                    className="h-full w-full rounded-lg object-cover"
+                    alt={`Post image ${index + 1}`}
                   />
                 </picture>
               ))}
@@ -95,18 +123,19 @@ const PostCards = ({ post, userId }: Props) => {
           )}
         </div>
 
-        <div onClick={handleStopPropagation}>
+        <div onClick={stopPropagation} className="xs:w-fit">
           <LikeSection
-            link={link}
+            link={postUrl}
+            views={views.length}
             postId={_id.toString()}
-            userId={userId}
-            likes={likes}
+            likes={likes.length}
+            isLiked={isLiked}
             comments={comments}
           />
         </div>
       </div>
     </article>
   );
-};
+}
 
 export default PostCards;

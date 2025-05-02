@@ -62,10 +62,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  modal,
 }: Readonly<{
   children: React.ReactNode;
-  modal: React.ReactNode;
 }>) {
   return (
     <html lang="en">
@@ -80,7 +78,7 @@ export default function RootLayout({
         <div className="flex">
           <div className="xsm:block xsm:w-[70px] sticky hidden h-dvh shrink-0 md:w-[200px]"></div>
           <main className="w-full">
-            {children} {modal}
+            {children}
             <footer className="mb-25"></footer>
           </main>
           <RecentPosts />

@@ -14,20 +14,16 @@ export async function GET(req: NextRequest) {
   const pageLimit = parseInt(limit) || 20;
 
   try {
-    const { userId, isAuth, username } = await verifySession();
-
-    if (!isAuth) {
-      return NextResponse.json(
-        { success: false, message: "User not authorised" },
-        { status: 401 },
-      );
-    }
+    const { userId, username } = await verifySession();
 
     const notifications = await Notification.find({
       receiver: userId,
     })
       .populate([
-        { path: "sender", select: ["-password", "-email"] },
+        {
+          path: "sender",
+          select: ["name", "_id", "username", "avatar"],
+        },
         { path: "postId", select: ["_id", "content", "images"] },
         { path: "commentId", select: ["_id", "content"] },
       ])

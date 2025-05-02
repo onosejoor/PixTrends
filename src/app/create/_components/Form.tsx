@@ -3,18 +3,24 @@
 import Img from "@/components/Img";
 import { showToast } from "@/hooks/useToast";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, FormEvent, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  useCallback,
+  useState,
+  useTransition,
+} from "react";
 import { FaImage } from "react-icons/fa";
 import { ImCancelCircle } from "react-icons/im";
-import CharCountCircle from "./CharCount";
-import { uploadImages } from "@/lib/actions/upload";
 import { MdCancel } from "react-icons/md";
 import axios from "axios";
 import TextareaAutosize from "react-textarea-autosize";
+import CharCount from "./CharCount";
 
 type FormData = {
   imagesUrl: string[];
   imageFiles: File[] | null;
+  text: string;
 };
 
 type APIResponse = {
@@ -23,36 +29,47 @@ type APIResponse = {
   link: string;
 };
 
-export default function CreatePostForm() {
+type Props = {
+  user: {
+    username: string;
+    avatar: string;
+  };
+};
+
+export default function CreatePostForm({ user }: Props) {
   const [formData, setFormData] = useState<FormData>({
+    text: "",
     imagesUrl: [],
     imageFiles: null,
   });
-  const [text, setText] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [pending, startTransition] = useTransition();
 
   const router = useRouter();
 
   const goBack = () => router.back();
 
-  const { imagesUrl, imageFiles } = formData;
+  const { imagesUrl, imageFiles, text } = formData;
 
-  const isDisabled = (!text.trim() && imagesUrl.length < 1) || isLoading;
+  const isDisabled = (!text.trim() && imagesUrl.length < 1) || pending;
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement & HTMLTextAreaElement>,
   ) => {
-    const { value, files } = e.target;
+    const { files } = e.target;
     const maxFileSize = 2.5 * 1024 * 1024;
+    const isValidImage = (file: File) => file.size <= maxFileSize;
 
     if (files && files.length) {
       const fileLists = Array.from(files);
       const remainingSlots = 4 - imagesUrl.length;
 
+      const newImagesUrl: string[] = [];
+      const newImageFiles: File[] = [];
+
       for (let i = 0; i < Math.min(fileLists.length, remainingSlots); i++) {
         const file = fileLists[i];
 
-        if (file.size > maxFileSize) {
+        if (!isValidImage(file)) {
           showToast({
             message: "File size is greater than 2MB",
             variants: "error",
@@ -60,74 +77,85 @@ export default function CreatePostForm() {
           continue;
         }
 
-        setFormData((prev) => ({
-          ...prev,
-          imagesUrl: [...prev.imagesUrl, URL.createObjectURL(file)],
-          imageFiles: prev.imageFiles ? [...prev.imageFiles, file] : [file],
-        }));
+        newImagesUrl.push(URL.createObjectURL(file));
+        newImageFiles.push(file);
       }
+
+      setFormData((prev) => ({
+        ...prev,
+        imagesUrl: [...prev.imagesUrl, ...newImagesUrl],
+        imageFiles: prev.imageFiles
+          ? [...prev.imageFiles, ...newImageFiles]
+          : newImageFiles,
+      }));
     } else {
-      setText(value);
+      setFormData((prev) => ({
+        ...prev,
+        text: e.target.value,
+      }));
     }
   };
 
-  function removeImage(idx: number) {
-    const removeImageUrl = imagesUrl.filter((_, index) => index !== idx);
-    const removeImageFile = imageFiles!.filter((_, index) => index !== idx);
+  const removeImage = useCallback(
+    (idx: number) => {
+      setFormData((prev) => {
+        const newImagesUrl = [...prev.imagesUrl];
+        const newImageFiles = [...prev.imageFiles!];
 
-    setFormData((prev) => {
-      return {
-        ...prev,
-        imageFiles: removeImageFile,
-        imagesUrl: removeImageUrl,
-      };
-    });
-  }
+        newImagesUrl.splice(idx, 1);
+        newImageFiles.splice(idx, 1);
+
+        URL.revokeObjectURL(prev.imagesUrl[idx]);
+
+        return {
+          ...prev,
+          imagesUrl: newImagesUrl,
+          imageFiles: newImageFiles,
+        };
+      });
+    },
+    [setFormData],
+  );
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    setIsLoading(true);
 
-    try {
-      let uploadedImageUrls: string[] = [];
-      if (imageFiles && imageFiles.length > 0) {
-        const uploadResult = await uploadImages(imageFiles);
-        if (!uploadResult.success) {
-          showToast({
-            message: uploadResult.message || "Failed to upload images",
-            variants: "error",
-          });
-          setIsLoading(false);
-          return;
+    startTransition(async () => {
+      try {
+        const formData = new FormData();
+
+        if (imageFiles && imageFiles.length > 0) {
+          for (const file of imageFiles) {
+            formData.append("images", file);
+          }
         }
-        uploadedImageUrls = uploadResult.urls!;
-      }
-      const sendFormToApi = await axios.post<APIResponse>("/api/posts", {
-        text,
-        images: uploadedImageUrls,
-      });
-      const response = sendFormToApi.data;
-      showToast({
-        message: response.message,
-        variants: response.success ? "success" : "error",
-      });
-      if (response.success) {
-        setText("");
-        setFormData({
-          imagesUrl: [],
-          imageFiles: null,
+        formData.append("text", text);
+
+        const sendFormToApi = await axios.post<APIResponse>(
+          "/api/posts",
+          formData,
+        );
+        const response = sendFormToApi.data;
+        showToast({
+          message: response.message,
+          variants: response.success ? "success" : "error",
         });
-        router.push(response.link);
+        if (response.success) {
+          setFormData({
+            imagesUrl: [],
+            imageFiles: null,
+            text: "",
+          });
+          router.push(response.link);
+        }
+      } catch (error) {
+        console.error("Error creating post:", error);
+        showToast({
+          message: "Failed to create post. Please try again.",
+          variants: "error",
+        });
       }
-    } catch (error) {
-      console.error("Error creating post:", error);
-      showToast({
-        message: "Failed to create post. Please try again.",
-        variants: "error",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    });
   }
 
   return (
@@ -146,16 +174,20 @@ export default function CreatePostForm() {
         </div>
         <div className="flex items-start gap-3">
           <Img
-            src={"/images/chal.png"}
+            src={user.avatar}
             className="size-10 rounded-full"
-            alt="user"
+            alt={user.username}
+            loading="lazy"
           />
           <div className="grid h-fit w-full gap-5">
-            <h2 className="text-primary text-sm font-semibold">DevText16</h2>
+            <h2 className="text-primary text-sm font-semibold">
+              {user.username}
+            </h2>
             <TextareaAutosize
               onChange={handleChange}
               name="text"
               value={text}
+              cacheMeasurements
               className="border-gray focus:border-accent text-gray resize-none border-b outline-none"
               placeholder="What's trending?"
               minRows={2}
@@ -202,12 +234,7 @@ export default function CreatePostForm() {
             />
             <FaImage className="fill-gray group-hover:fill-accent size-5 cursor-pointer" />
           </label>
-
-          <CharCountCircle
-            text={text}
-            disabled={isDisabled}
-            loading={isLoading}
-          />
+          <CharCount text={text} loading={pending} disabled={isDisabled} />
         </div>
       </form>
     </div>

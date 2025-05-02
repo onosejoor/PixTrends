@@ -18,7 +18,6 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 type APIResponse = {
   success: boolean;
   posts: IPost[];
-  userId: string | null;
 };
 
 type Props = {
@@ -40,7 +39,7 @@ export default function UserPosts({ username, isUser }: Props) {
     return <PostLoader />;
   }
 
-  const { posts, userId } = data!;
+  const { posts } = data!;
 
   return (
     <div className="grid">
@@ -50,9 +49,10 @@ export default function UserPosts({ username, isUser }: Props) {
       </div>
       <div className="divide-accent divide-y">
         {posts.length > 0 ? (
-          posts.map((post, index) => (
-            <PostCards key={index} post={post} userId={userId} />
-          ))
+          posts.map((post, index) => {
+            const updatedPost = { ...post, isUser };
+            return <PostCards key={index} post={updatedPost} />;
+          })
         ) : (
           <EmptyState isUser={isUser} />
         )}

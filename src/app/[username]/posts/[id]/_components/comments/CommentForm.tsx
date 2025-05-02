@@ -121,9 +121,10 @@ export default function CommentForm({
           <div className="border-light-gray has-focus:ring-accent flex-1 overflow-hidden rounded-[10px] border ring ring-transparent">
             <TextAreaAutoRezise
               minRows={4}
+              rows={4}
               maxRows={7}
               placeholder="Add a comment..."
-              className="text-secondary mb-2 h-full w-full resize-none border border-none p-3 outline-none"
+              className="text-secondary mb-2 w-full resize-none border border-none p-3 outline-none"
               value={text}
               onChange={(e) => setText(e.target.value)}
             />

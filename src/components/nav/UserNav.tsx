@@ -14,7 +14,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { eventEmitter } from "@/lib/eventEmitter";
-import { AlignLeft } from "lucide-react";
+import { UserModal } from "./Modal";
 
 const fetcher = async (url: string) => axios.get(url).then((res) => res.data);
 
@@ -141,9 +141,9 @@ export default function UserNavComp() {
         </Link>
       </li>
 
-      <button className="absolute bottom-5 mt-auto">
-        <AlignLeft className="text-gray size-10" />
-      </button>
+      <div className="mt-auto hidden xsm:block">
+        <UserModal />
+      </div>
     </>
   );
 }

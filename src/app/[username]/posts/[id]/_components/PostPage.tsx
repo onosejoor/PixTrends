@@ -8,10 +8,14 @@ import GoBackWithMenu from "./GoBackMenu";
 import { cx } from "@/components/utils";
 import Img from "@/components/Img";
 import LikeSection from "@/app/[username]/_components/LikeSection";
-import CommentSection from "@/app/_components/comments/Comment";
+import CommentSection from "@/app/[username]/posts/[id]/_components/comments/Comment";
 import DynamicPostLoader from "@/components/loaders/DynamicPostLoader";
 import Link from "next/link";
 import PostsError from "@/app/_components/posts/error";
+import PostCardModal from "@/app/_components/posts/modal";
+import { Suspense } from "react";
+import CommentLoader from "@/components/loaders/CommentLoader";
+import TextHighlighter from "@/app/create/_components/TextHighlighter";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -22,7 +26,6 @@ type ApiResponse = {
 };
 
 type Props = {
-  userId: string | null;
   post: IPost;
 };
 
@@ -47,12 +50,12 @@ export default function PostPage({ postId }: { postId: string }) {
     return <DynamicPostLoader />;
   }
 
-  const { post, userId } = data!;
+  const { post } = data!;
 
-  return <DynamicPostCard post={post} userId={userId} />;
+  return <DynamicPostCard post={post} />;
 }
 
-const DynamicPostCard = ({ post, userId }: Props) => {
+const DynamicPostCard = ({ post }: Props) => {
   const {
     user: { username, name, avatar },
     content,
@@ -60,13 +63,21 @@ const DynamicPostCard = ({ post, userId }: Props) => {
     likes,
     comments,
     _id,
+    isUser,
+    views,
   } = post;
 
   const link = `${window.location.origin}/${username}/posts/${_id}`;
 
   return (
     <article className="grid gap-7 p-5">
-      <GoBackWithMenu />
+      <GoBackWithMenu>
+        <PostCardModal
+          isUser={isUser}
+          postId={_id.toString()}
+          username={username}
+        />
+      </GoBackWithMenu>
       <hr className="border-light-gray/70" />
       <div className="flex flex-col gap-6">
         <Link href={`/${username}`} className="flex items-start gap-5">
@@ -80,9 +91,10 @@ const DynamicPostCard = ({ post, userId }: Props) => {
             <p className="text-accent text-base font-medium">@{username}</p>
           </div>
         </Link>
-        <p className="text-secondary whitespace-break-spaces sm:text-lg">
-          {content}
-        </p>
+        <div className="text-secondary sm:text-lg">
+          <TextHighlighter text={content} />
+        </div>
+
         {images.length > 0 && (
           <div
             className={cx(
@@ -114,14 +126,16 @@ const DynamicPostCard = ({ post, userId }: Props) => {
         <hr className="border-light-gray" />
         <LikeSection
           link={link}
-          userId={userId}
-          likes={likes}
+          views={views.length}
+          likes={likes.length}
           comments={comments}
           postId={_id.toString()}
         />
         <hr className="border-light-gray" />
       </div>
-      <CommentSection postId={_id.toString()} user={post.user} />
+      <Suspense fallback={<CommentLoader />}>
+        <CommentSection postId={_id.toString()} user={post.user} />
+      </Suspense>
     </article>
   );
 };

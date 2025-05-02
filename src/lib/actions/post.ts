@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { Post } from "../models";
 import { sendNotification } from "./notification";
 import { verifySession } from "./session";
@@ -19,7 +20,7 @@ export async function likePost(postId: string) {
     }
 
     const isLiked = findPost?.likes.some((id) => id.toString() === userId);
-    
+
     const isUser = findPost.user.equals(userId as string);
 
     const update = isLiked
@@ -44,5 +45,18 @@ export async function likePost(postId: string) {
   } catch (error) {
     console.log("[POST_LIKE_ERROR]: ", error);
     return { success: false, message: "Error liking post" };
+  }
+}
+
+export async function deletePost(postId: string) {
+  try {
+    await Post.findByIdAndDelete(postId);
+
+    return { success: true, message: "Post deleted!" };
+  } catch (error) {
+    console.log("[POST_DELETE_ERROR]: ", error);
+    return { success: false, message: "Error deleting post" };
+  } finally {
+    redirect("/");
   }
 }

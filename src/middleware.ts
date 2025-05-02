@@ -2,16 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { verifySession } from "./lib/actions/session";
 
-const protectedRoutes = [
-//   /^\/following(\/.*)?$/,
-  /^\/create$/,
-  /^\/notifications$/,
+const protectedRoutes = [/^\/create$/, /^\/notifications$/, /^\/settings$/];
 
-];
+const regex = /^\/api\/(cron-jobs|posts|auth|recents|discover|trending)/;
 
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
+  const isApiRoute = path.startsWith("/api");
   const { isAuth } = await verifySession();
+
+  if (isApiRoute && !isAuth && !path.match(regex)) {
+    return NextResponse.json(
+      { success: false, message: "Unauthorized!" },
+      { status: 401 },
+    );
+  }
 
   const isProtected = protectedRoutes.some((regex) => regex.test(path));
 
@@ -23,5 +28,9 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
+  matcher: [
+    "/api/!posts",
+    "/api/((?!cron-jobs|posts|auth|recents|discover|trending).*)",
+    "/((?!_next/static|_next/image|.*\\.png$).*)",
+  ],
 };

@@ -77,7 +77,7 @@ const Toast: React.FC = () => {
   };
 
   const toastVariant = {
-    success: "bg-white text-gray border-2 border-accent",
+    success: "bg-white text-gray shadow-light-gray shadow-sm",
     error: "bg-red-500 text-foreground",
   };
 
@@ -91,14 +91,14 @@ const Toast: React.FC = () => {
     <div
       className={cx(
         userVariants,
-        "group shadow-post-card shadow-light-gray animate-in slide-in-from-top fixed top-1.5 bottom-auto left-1/2 z-[100] flex w-full max-w-[calc(100%-20px)] -translate-x-1/2 translate-y-0 items-start justify-start gap-2 rounded-md px-6 py-4 transition-transform sm:!w-fit xs:max-w-[400px]",
+        "group shadow-post-card shadow-light-gray animate-in slide-in-from-top xs:max-w-[400px] fixed top-1.5 bottom-auto left-1/2 z-[100] flex w-full max-w-[calc(100%-20px)] -translate-x-1/2 translate-y-0 items-start justify-start gap-2 rounded-lg px-6 py-5 transition-transform sm:!w-fit",
       )}
     >
       <div>{variants === "success" ? <CheckedIcon /> : <ErrorIcon />}</div>
       <p className="font-medium">{message}</p>
 
       <button
-        className="flex-shrink-0 opacity-0 transition-opacity self-center group-hover:opacity-[1]"
+        className="flex-shrink-0 self-center opacity-0 transition-opacity group-hover:opacity-[1]"
         onClick={removeToast}
       >
         <CancelIcon fill={variants === "success" ? "red" : "white"} />

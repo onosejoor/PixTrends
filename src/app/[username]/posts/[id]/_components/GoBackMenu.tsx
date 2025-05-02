@@ -2,15 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { EllipsisVertical } from "lucide-react";
 import { MdArrowBack } from "react-icons/md";
 
-export default function GoBackWithMenu() {
+export default function GoBackWithMenu({children}: {children: React.ReactNode}) {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
 
   return (
-  <div className="flex items-center justify-between py-2">
+    <div className="flex items-center justify-between py-2">
       {showModal && (
         <div
           className="fixed inset-0 z-1 flex items-center justify-center bg-transparent"
@@ -24,34 +23,7 @@ export default function GoBackWithMenu() {
         <MdArrowBack /> Back
       </button>
 
-      <div className="relative">
-        <button
-          onClick={() => setShowModal(true)}
-          className="rounded-full p-2 transition hover:bg-gray-100"
-        >
-          <EllipsisVertical className="text-primary h-5 w-5" />
-        </button>
-
-        {showModal && (
-          <div
-            className="animate-in zoom-in-0 absolute right-full z-10 w-50 rounded-xl bg-white p-5 shadow-xl"
-          >
-            <ul className="space-y-3">
-              <li className="w-full">
-                <button className="text-gray hover:text-primary hover:bg-foreground w-full rounded-md p-3 text-left text-base">
-                  Copy Profile Link
-                </button>
-              </li>
-            </ul>
-            <button
-              onClick={() => setShowModal(false)}
-              className="mt-5 w-full px-3 text-left text-base text-blue-500 hover:underline"
-            >
-              Close
-            </button>
-          </div>
-        )}
-      </div>
+     {children}
     </div>
   );
 }

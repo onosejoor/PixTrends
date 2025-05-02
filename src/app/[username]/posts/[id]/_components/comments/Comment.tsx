@@ -13,6 +13,7 @@ import CommentLoader from "@/components/loaders/CommentLoader";
 import CommentEmptyState from "@/components/empty-states/CommentEmptyState";
 
 import CommentForm from "./CommentForm";
+import CommentError from "./CommentsError";
 
 dayjs.extend(relativeTime);
 
@@ -50,7 +51,7 @@ export default function CommentSection({
   };
 
   if (error) {
-    return <p>error...</p>;
+    return <CommentError />;
   }
 
   if (isLoading) {

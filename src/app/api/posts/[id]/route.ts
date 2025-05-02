@@ -7,14 +7,13 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { isAuth, userId } = await verifySession();
+    const { userId } = await verifySession();
 
     const id = (await params).id;
 
-    const findPost = await Post.findById(id).populate<{ user: IUser }>("user", [
-      "-email",
-      "-password",
-    ]);
+    const findPost = await Post.findById(id)
+      .populate<{ user: IUser }>("user", ["name", "_id", "username", "avatar"])
+      .lean();
 
     if (!findPost) {
       return NextResponse.json(
@@ -23,10 +22,15 @@ export async function GET(
       );
     }
 
+    const isLiked = !!findPost?.likes.some((like) =>
+      like.equals(userId as string),
+    );
+    const isUser = findPost.user._id.equals(userId as string);
+    const post = { ...findPost, isLiked, isUser };
+
     return NextResponse.json({
       success: true,
-      post: findPost,
-      userId: isAuth ? userId : null,
+      post: post,
     });
   } catch (error) {
     console.log("[GET_POST_BY_ID_ERROR]:", error);
