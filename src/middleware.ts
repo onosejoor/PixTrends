@@ -4,7 +4,7 @@ import { verifySession } from "./lib/actions/session";
 
 const protectedRoutes = [/^\/create$/, /^\/notifications$/, /^\/settings$/];
 
-const regex = /^\/api\/(cron-jobs|posts|auth|recents|discover|trending)/;
+const regex = /^\/api\/(cron-jobs|posts|auth|recents|discover|trending|users)/;
 
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
