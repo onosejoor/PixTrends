@@ -64,7 +64,7 @@ function PostCards({ post }: Props) {
             <div className="flex items-start gap-4">
               <Img
                 src={user.avatar}
-                className="h-12 w-12 rounded-full object-cover"
+                className="size-10 xs:size-12  rounded-full object-cover"
                 alt={`${user.username}'s avatar`}
               />
               <div className="grid gap-1">

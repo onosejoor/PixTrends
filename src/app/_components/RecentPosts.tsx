@@ -10,6 +10,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import useSWR from "swr";
 import RecentPostsError from "./error";
+import TextHighlighter from "../create/_components/TextHighlighter";
 
 dayjs.extend(relativeTime);
 
@@ -87,7 +88,9 @@ const PostCards = ({ content, user, createdAt, _id }: IPost) => {
             </div>
           </div>
 
-          <p className="text-gray">{truncateText}</p>
+          <div className="*:whitespace-normal">
+            <TextHighlighter text={truncateText} />
+          </div>
         </div>
       </article>
     </Link>

@@ -45,7 +45,7 @@ export default function PostCardModal({ isUser, postId, username }: Props) {
         </button>
 
         {showModal && (
-          <div className="animate-in zoom-in-0 absolute right-full z-10 min-w-50 rounded-xl bg-white p-5 shadow-xl">
+          <div className="animate-in zoom-in-0 absolute right-0 top-full z-10 min-w-50 rounded-xl bg-white p-5 shadow-xl">
             <ul className="space-y-3">
               <li className="w-full">
                 <button
@@ -53,14 +53,16 @@ export default function PostCardModal({ isUser, postId, username }: Props) {
                   className="text-gray hover:text-primary hover:bg-foreground flex w-full items-center gap-3 rounded-md p-3 text-left text-base"
                 >
                   <CopyIcon className="text-gray size-5" />
-                  <span className="whitespace-nowrap">Copy Profile Link</span>
+                  <span className="xs:text-base text-sm whitespace-nowrap">
+                    Copy Profile Link
+                  </span>
                 </button>
               </li>
               {isUser && (
                 <li className="w-full">
                   <button
                     onClick={handleDelete}
-                    className="hover:text-primary hover:bg-foreground flex w-full items-center gap-3 rounded-md p-3 text-left text-base text-red-500"
+                    className="hover:text-primary xs:text-base hover:bg-foreground flex w-full items-center gap-3 rounded-md p-3 text-left text-sm text-red-500"
                   >
                     <TrashIcon className="size-5 text-red-500" />
                     Delete
@@ -70,7 +72,7 @@ export default function PostCardModal({ isUser, postId, username }: Props) {
             </ul>
             <button
               onClick={() => setShowModal(false)}
-              className="mt-5 w-full px-3 text-left text-base text-blue-500 hover:underline"
+              className="mt-5 w-full px-3 text-left text-sm xs:text-base text-blue-500 hover:underline"
             >
               Close
             </button>

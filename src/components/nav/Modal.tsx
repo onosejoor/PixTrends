@@ -1,23 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { cx } from "@/components/utils";
 import { Settings, LogOut, AlignLeft } from "lucide-react";
+import Link from "next/link";
 
 export function UserModal() {
   const [openModal, setOpenModal] = useState(false);
 
-  const navItems = [
-    { label: "Settings", icon: <Settings size={18} /> },
-    {
-      label: "Log out",
-      icon: <LogOut className="text-red-500" size={18} />,
-      isDanger: true,
-    },
-  ];
-
   return (
-    <div className="relative xsm:absolute xsm:bottom-5">
+    <div className="xsm:absolute xsm:bottom-5 relative">
       {openModal && (
         <div
           onClick={() => setOpenModal(false)}
@@ -28,22 +19,35 @@ export function UserModal() {
         <AlignLeft className="text-primary size-7.5" />
       </button>
       {openModal && (
-        <div className="border-light-gray animate-in zoom-in-95 xsm:-right-25 xsm:bottom-full xsm:top-auto absolute top-full right-full bottom-0 z-30 h-fit w-fit max-w-50 overflow-hidden rounded-xl border bg-white p-2 shadow-xl xsm:left-0 md:-right-10 md:bottom-10">
+        <div className="border-light-gray animate-in zoom-in-95 xsm:-right-25 xsm:bottom-full xsm:top-auto xsm:left-0 absolute top-full right-full bottom-0 z-30 h-fit w-fit max-w-50 overflow-hidden rounded-xl border bg-white p-2 shadow-xl md:-right-10 md:bottom-10">
           <div className="py-2">
-            {navItems.map((item) => (
-              <button
-                key={item.label}
-                className={cx(
-                  "hover:bg-foreground w-full rounded-md px-5 py-3 text-left",
-                  item.isDanger ? "text-red-500" : "text-primary",
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-gray">{item.icon}</span>
-                  <span className={"font-medium"}>{item.label}</span>
-                </div>
-              </button>
-            ))}
+            <button
+              className={
+                "hover:bg-foreground w-full rounded-md px-5 py-3 text-left text-red-500"
+              }
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-gray">
+                  <LogOut className="text-red-500" size={18} />
+                </span>
+                <span className={"font-medium"}>Logout</span>
+              </div>
+            </button>
+            
+
+            <Link
+              href={"/settings"}
+              className={
+                "hover:bg-foreground w-full block rounded-md px-5 py-3 h-fit text-left"
+              }
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-gray">
+                  <Settings size={18} />
+                </span>
+                <span className={"text-gray font-medium"}>Settings</span>
+              </div>
+            </Link>
           </div>
         </div>
       )}
