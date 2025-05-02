@@ -30,7 +30,7 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     "/api/!posts",
-    "/api/((?!cron-jobs|posts|auth|recents|discover|trending).*)",
+    "/api/((?!cron-jobs|posts|auth|recents|discover|trending|users).*)",
     "/((?!_next/static|_next/image|.*\\.png$).*)",
   ],
 };
