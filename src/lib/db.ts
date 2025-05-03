@@ -18,7 +18,7 @@ export default async function connectDB() {
   }
   if (!cached_connection.promise) {
     const opts = {
-      bufferCommands: true,
+      bufferCommands: false,
     };
     cached_connection.promise = mongoose
       .connect(MONGODB_URL, opts)

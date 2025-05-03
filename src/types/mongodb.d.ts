@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { MongoClient } from "mongodb";
 import { Types } from "mongoose";
 
 declare global {
