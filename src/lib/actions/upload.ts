@@ -5,10 +5,23 @@ import { v2 as cloudinary } from "cloudinary";
 const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME!;
 const CLOUDINARY_APIKEY = process.env.CLOUDINARY_APIKEY!;
 const CLOUDINARY_PRESET = process.env.CLOUDINARY_PRESET!;
+const CLOUDINARY_SECRET = process.env.CLOUDINARY_SECRET!;
 
-if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_APIKEY || !CLOUDINARY_PRESET) {
+if (
+  !CLOUDINARY_CLOUD_NAME ||
+  !CLOUDINARY_APIKEY ||
+  !CLOUDINARY_PRESET ||
+  !CLOUDINARY_SECRET
+) {
   throw new Error("Cloudinary environment variables are not set");
 }
+
+cloudinary.config({
+  cloud_name: CLOUDINARY_CLOUD_NAME,
+  api_key: CLOUDINARY_APIKEY,
+  api_secret: CLOUDINARY_SECRET,
+  upload_preset: CLOUDINARY_PRESET,
+});
 
 export async function uploadImages(images: File[] | null) {
   if (!images || images.length === 0) {
