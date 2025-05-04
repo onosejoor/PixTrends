@@ -26,7 +26,6 @@ export const { signIn, signOut, handlers } = NextAuth({
             name: profile?.name,
             avatar: profile?.picture,
             password: process.env.GOOGLE_CODE,
-            username: null,
           });
 
           await Promise.all([

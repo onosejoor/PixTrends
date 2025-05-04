@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import dayjs from "dayjs";
-import useSWR from "swr";
+import useSWR, { SWRConfiguration } from "swr";
 import relativeTime from "dayjs/plugin/relativeTime";
 
 import PostLoader from "@/components/loaders/PostLoader";
@@ -25,10 +25,16 @@ type Props = {
   isUser: boolean;
 };
 
+const options: SWRConfiguration = {
+  revalidateIfStale: false,
+  revalidateOnFocus: false,
+};
+
 export default function UserPosts({ username, isUser }: Props) {
   const { data, isLoading, error } = useSWR<APIResponse>(
     `/api/users/${username}/posts`,
     fetcher,
+    options,
   );
 
   if (error) {

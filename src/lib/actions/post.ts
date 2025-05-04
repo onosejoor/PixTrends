@@ -7,10 +7,14 @@ import { verifySession } from "./session";
 
 export async function likePost(postId: string) {
   try {
-    const { isAuth, userId } = await verifySession();
+    const { isAuth, userId, username } = await verifySession();
 
     if (!isAuth) {
       return { success: false, message: "Unauthorized!" };
+    }
+
+    if (!username) {
+      redirect("/create-username")
     }
 
     const findPost = await Post.findById(postId);

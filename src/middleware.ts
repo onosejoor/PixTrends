@@ -4,18 +4,23 @@ import { verifySession } from "./lib/actions/session";
 
 const protectedRoutes = [/^\/create$/, /^\/notifications$/, /^\/settings$/];
 
-const regex = /^\/api\/(cron-jobs|posts|auth|recents|discover|trending|users|comments|search)/;
+const regex =
+  /^\/api\/(cron-jobs|posts|auth|recents|discover|trending|users|comments|search|utils)/;
 
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const isApiRoute = path.startsWith("/api");
-  const { isAuth } = await verifySession();
+  const { isAuth, username } = await verifySession();
 
   if (isApiRoute && !isAuth && !path.match(regex)) {
     return NextResponse.json(
       { success: false, message: "Unauthorized!" },
       { status: 401 },
     );
+  }
+
+  if (!username && isAuth && req.method === "POST") {
+    return NextResponse.redirect(new URL("/create-username", req.nextUrl));
   }
 
   const isProtected = protectedRoutes.some((regex) => regex.test(path));
@@ -30,7 +35,7 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     "/api/!posts",
-    "/api/((?!cron-jobs|posts|auth|recents|discover|trending|users|comments|search).*)",
+    "/api/((?!cron-jobs|posts|auth|recents|discover|trending|users|comments|search|utils).*)",
     "/((?!_next/static|_next/image|.*\\.png$).*)",
   ],
 };

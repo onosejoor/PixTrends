@@ -1,7 +1,7 @@
 "use client";
 
 import PostLoader from "@/components/loaders/PostLoader";
-import useSWR from "swr";
+import useSWR, { SWRConfiguration } from "swr";
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
 import PostCards from "./posts/PostCards";
@@ -16,8 +16,13 @@ type APIResponse = {
   posts: IPost[];
 };
 
+const options : SWRConfiguration = {
+  revalidateIfStale: false,
+  revalidateOnFocus: false,
+}
+
 export default function HomePagePosts() {
-  const { data, error, isLoading } = useSWR<APIResponse>("/api/posts", fetcher);
+  const { data, error, isLoading } = useSWR<APIResponse>("/api/posts", fetcher, options);
 
   if (error) {
     return <PostsError />;

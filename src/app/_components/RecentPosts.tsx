@@ -8,7 +8,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import Link from "next/link";
 
 import { usePathname } from "next/navigation";
-import useSWR from "swr";
+import useSWR, { SWRConfiguration } from "swr";
 import RecentPostsError from "./error";
 import { SearchBar } from "../trending/_components/SearchBar";
 
@@ -22,6 +22,10 @@ type APIResponse = {
   success: true;
   data: IPost[];
 };
+
+const options : SWRConfiguration = {
+  revalidateIfStale: false
+}
 
 export function RecentPosts() {
   const path = usePathname();
@@ -44,7 +48,7 @@ export function RecentPosts() {
     isLoading,
     data: response,
     error,
-  } = useSWR<APIResponse>(url, fetcher);
+  } = useSWR<APIResponse>(url, fetcher, options);
 
   if (isProtectedRoute) {
     return;

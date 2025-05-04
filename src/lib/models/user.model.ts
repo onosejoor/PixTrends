@@ -30,8 +30,8 @@ const userSchema = new Schema<IUser>(
       type: String,
       required: false,
       unique: true,
-      trim: true,
       sparse: true,
+      trim: true,
     },
     bio: { type: String, required: false, default: "" },
     followers: [{ type: Types.ObjectId, ref: "User" }],
@@ -55,8 +55,8 @@ userSchema.pre("save", async function (next) {
   return next();
 });
 
+userSchema.index({ username: 1, email: 1 });
 userSchema.index({ name: "text", username: "text" });
-userSchema.index({ email: 1, username: 1 });
 
 const User: Model<IUser> =
   mongoose.models?.User || model<IUser>("User", userSchema);

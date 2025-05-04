@@ -1,4 +1,6 @@
+import { verifySession } from "@/lib/actions/session";
 import { Post, User } from "@/lib/models";
+import { Types } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 type Params = {
@@ -9,6 +11,8 @@ export async function GET(req: NextRequest, { params }: Params) {
   try {
     const username = (await params).username;
     const searchParams = req.nextUrl.searchParams;
+
+    const { userId } = await verifySession();
 
     const { page, limit } = Object.fromEntries(searchParams.entries()) as {
       page: string;
@@ -27,16 +31,55 @@ export async function GET(req: NextRequest, { params }: Params) {
       );
     }
 
-    const getPost = await Post.find({ user: checkUser._id })
-      .limit(limitValue)
-      .skip((nextPage - 1) * limitValue)
-      .sort({ createdAt: -1 })
-      .populate("user", ["-password", "-email"])
-      .lean();
+    const getPosts = await Post.aggregate([
+      { $match: { user: checkUser._id } },
+      { $sample: { size: limitValue } },
+
+      {
+        $skip: (nextPage - 1) * limitValue,
+      },
+      {
+        $limit: limitValue,
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+      {
+        $addFields: {
+          isLiked: {
+            $in: [new Types.ObjectId(userId as string), "$likes"],
+          },
+          isUser: { $eq: ["$user._id", new Types.ObjectId(userId as string)] },
+        },
+      },
+      {
+        $project: {
+          content: 1,
+          createdAt: 1,
+          images: 1,
+          comments: 1,
+          isUser: 1,
+          likes: 1,
+          isLiked: 1,
+          views: 1,
+          "user._id": 1,
+          "user.username": 1,
+          "user.avatar": 1,
+        },
+      },
+    ]);
 
     return NextResponse.json({
       success: true,
-      posts: getPost,
+      posts: getPosts,
     });
   } catch (error) {
     console.log("[GET_USER_POSTS_ERROR]: ", error);

@@ -48,7 +48,7 @@ export default function UserNavComp() {
   const userLinks = useMemo(
     () => [
       { name: "Create", href: "/create", icon: <CreateIcon /> },
-      { name: "Profile", href: `/${username}`, icon: <ProfileIcon /> },
+      { name: "Profile", href: `/${username || null}`, icon: <ProfileIcon /> },
     ],
     [username],
   );
