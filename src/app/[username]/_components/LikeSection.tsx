@@ -1,6 +1,7 @@
 "use client";
 
 import { copyToClipboard, cx } from "@/components/utils";
+import { showToast } from "@/hooks/useToast";
 import { likePost } from "@/lib/actions/post";
 import { ChartNoAxesColumn, MessageSquare, Share2 } from "lucide-react";
 import { useState } from "react";
@@ -30,11 +31,18 @@ export default function LikeSection({
     setLikeCount(like ? likeCount - 1 : likeCount + 1);
     setLike(!like);
 
-    await likePost(postId);
+    const { success, message } = await likePost(postId);
+
+    if (!success) {
+      showToast({
+        message: message!,
+        variants: "error",
+      });
+    }
   };
 
   return (
-    <div className="relative z-5 flex w-full items-center justify-between xsm:justify-normal xs:gap-12.5 xs:w-fit">
+    <div className="xsm:justify-normal xs:gap-12.5 xs:w-fit relative z-5 flex w-full items-center justify-between">
       <div
         role="button"
         onClick={handleClick}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 import Img from "@/components/Img";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -45,6 +45,21 @@ export default function CommentSection({ postId }: { postId: string }) {
     setReplyingTo(id);
   };
 
+  const renderedComments = useMemo(() => {
+    if (!data) return null;
+    const { comments, currentUser } = data;
+    return comments.map((comment) => (
+      <CommentCards
+        currentUser={currentUser}
+        postId={postId}
+        key={comment._id.toString()}
+        replyingTo={replyingTo}
+        setReplyingAction={handleReplyingTo}
+        comment={comment}
+      />
+    ));
+  }, [data, postId, replyingTo]);
+
   if (error) {
     return <CommentError />;
   }
@@ -53,27 +68,14 @@ export default function CommentSection({ postId }: { postId: string }) {
     return <CommentLoader />;
   }
 
-  const { comments, currentUser } = data!;
+  const { currentUser, comments } = data!;
 
   return (
     <div className="mx-auto w-full">
       {currentUser && <CommentForm postId={postId} currentUser={currentUser} />}
 
       <div className="divide-light-gray divide-y">
-        {comments.length > 0 ? (
-          comments.map((comment) => (
-            <CommentCards
-              currentUser={currentUser}
-              postId={postId}
-              key={comment._id.toString()}
-              replyingTo={replyingTo}
-              setReplyingAction={handleReplyingTo}
-              comment={comment}
-            />
-          ))
-        ) : (
-          <CommentEmptyState />
-        )}
+        {comments.length > 0 ? renderedComments : <CommentEmptyState />}
       </div>
     </div>
   );
@@ -87,6 +89,7 @@ const CommentCards = ({
   currentUser,
 }: CardProps) => {
   const isReplying = replyingTo === comment._id.toString();
+
   return (
     <div className="flex flex-col gap-4 py-5">
       <Link
@@ -130,7 +133,8 @@ const CommentCards = ({
             {isReplying ? "Hide" : "Reply"}
           </button>
         </div>
-        {isReplying && (
+
+        {isReplying && currentUser && (
           <CommentForm
             parentId={comment._id.toString()}
             postId={postId}
@@ -139,39 +143,41 @@ const CommentCards = ({
           />
         )}
 
-        {comment.replies.length > 0 && (
-          <div className="divide-light-gray border-light-gray xsm:mt-3 xsm:pl-3 space-y-3 divide-y border-l pt-2 pl-0 md:pl-6">
-            {comment.replies.map((reply) => (
-              <div key={reply._id.toString()} className="flex gap-4 px-5 py-5">
-                <Img
-                  className="size-10 rounded-full"
-                  src={reply.user.avatar}
-                  alt={`${reply.user.name}'s avatar`}
-                />
-
-                <div className="flex-1 space-y-1">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <span className="text-primary font-medium">
-                        {reply.user.name}
-                      </span>
-                      <span className="text-accent ml-2 text-xs">
-                        @{reply.user.username}
-                      </span>
-                    </div>
-                  </div>
-
-                  <p className="text-secondary text-sm">{reply.content}</p>
-
-                  <div className="text-gray flex items-center gap-4 pt-1 text-xs">
-                    <span>{dayjs(reply.createdAt).fromNow()}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        {comment.replies.length > 0 && <ReplyCards replies={comment.replies} />}
       </div>
     </div>
   );
 };
+
+const ReplyCards = ({ replies }: { replies: IComment[] }) => (
+  <div className="divide-light-gray border-light-gray xsm:mt-3 xsm:pl-3 space-y-3 divide-y border-l pt-2 pl-0 md:pl-6">
+    {replies.map((reply) => (
+      <div key={reply._id.toString()} className="flex gap-4 px-5 py-5">
+        <Img
+          className="size-10 rounded-full"
+          src={reply.user.avatar}
+          alt={`${reply.user.name}'s avatar`}
+        />
+        <div className="flex-1 space-y-1">
+          <Link
+            href={`/${reply.user.username}`}
+            className="flex items-start justify-between"
+          >
+            <div>
+              <span className="text-primary font-medium">
+                {reply.user.name}
+              </span>
+              <span className="text-accent ml-2 text-xs">
+                @{reply.user.username}
+              </span>
+            </div>
+          </Link>
+          <p className="text-secondary text-sm">{reply.content}</p>
+          <div className="text-gray flex items-center gap-4 pt-1 text-xs">
+            <span>{dayjs(reply.createdAt).fromNow()}</span>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+);

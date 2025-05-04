@@ -2,7 +2,7 @@ import Img from "@/components/Img";
 import Spinner from "@/components/loaders/Spinner";
 import { cx } from "@/components/utils";
 import { showToast } from "@/hooks/useToast";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { Send } from "lucide-react";
 import { FormEvent, useState } from "react";
 import TextAreaAutoRezise from "react-textarea-autosize";
@@ -69,9 +69,7 @@ export default function CommentForm({
       showToast({
         variants: "error",
         message:
-          error instanceof AxiosError
-            ? (error.response?.statusText as string)
-            : "Error creating comment",
+          error instanceof Error ? error.message : "Error creating comment",
       });
     } finally {
       setLoading(false);
@@ -105,9 +103,7 @@ export default function CommentForm({
       showToast({
         variants: "error",
         message:
-          error instanceof AxiosError
-            ? (error.response?.statusText as string)
-            : "Error creating comment",
+          error instanceof Error ? error.message : "Error creating comment",
       });
     } finally {
       setLoading(false);
