@@ -3,9 +3,17 @@
 import { useState } from "react";
 import { Settings, LogOut, AlignLeft } from "lucide-react";
 import Link from "next/link";
+import { logout } from "@/lib/actions/delete";
+import { mutate } from "swr";
 
 export function UserModal() {
   const [openModal, setOpenModal] = useState(false);
+
+  async function logOutUser() {
+    await logout()
+    mutate("/api/users/me")
+    setOpenModal(false)
+  }
 
   return (
     <div className="xsm:absolute xsm:bottom-5 relative">
@@ -22,6 +30,7 @@ export function UserModal() {
         <div className="border-light-gray animate-in zoom-in-95 xsm:-right-25 xsm:bottom-full xsm:top-auto xsm:left-0 absolute top-full right-full bottom-0 z-30 h-fit w-fit max-w-50 overflow-hidden rounded-xl border bg-white p-2 shadow-xl md:-right-10 md:bottom-10">
           <div className="py-2">
             <button
+              onClick={logOutUser}
               className={
                 "hover:bg-foreground w-full rounded-md px-5 py-3 text-left text-red-500"
               }
@@ -33,12 +42,11 @@ export function UserModal() {
                 <span className={"font-medium"}>Logout</span>
               </div>
             </button>
-            
 
             <Link
               href={"/settings"}
               className={
-                "hover:bg-foreground w-full block rounded-md px-5 py-3 h-fit text-left"
+                "hover:bg-foreground block h-fit w-full rounded-md px-5 py-3 text-left"
               }
             >
               <div className="flex items-center gap-3">

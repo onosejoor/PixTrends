@@ -2,6 +2,7 @@ import "server-only";
 import { ObjectId } from "mongoose";
 import { decrypt, encrypt } from "./jwt";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 type SessionPayload = {
   userId: ObjectId | string;
@@ -36,4 +37,11 @@ export async function verifySession() {
     return { isAuth: false, message: "user not authenticated" };
 
   return { isAuth: true, userId: session.userId, username: session.username };
+}
+
+export async function deleteSession() {
+  const cookie = await cookies();
+  cookie.delete("pixtrends_session");
+
+  redirect("/");
 }
