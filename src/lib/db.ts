@@ -19,6 +19,11 @@ export default async function connectDB() {
   if (!cached_connection.promise) {
     const opts = {
       bufferCommands: true,
+      bufferTimeoutMS: 30000,
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+      connectTimeoutMS: 10000,
     };
     cached_connection.promise = mongoose
       .connect(MONGODB_URL, opts)

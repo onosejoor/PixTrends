@@ -28,7 +28,6 @@ type ApiResponse = {
 
 const options: SWRConfiguration = {
   revalidateIfStale: false,
-  revalidateOnFocus: false,
   revalidateOnReconnect: false,
 };
 
@@ -141,7 +140,7 @@ export default function UserNavComp() {
         </Link>
       </li>
 
-      <div className="mt-auto hidden xsm:block">
+      <div className="xsm:block mt-auto hidden">
         <UserModal />
       </div>
     </>
