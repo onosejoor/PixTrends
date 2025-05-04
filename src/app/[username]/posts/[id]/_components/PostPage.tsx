@@ -134,7 +134,7 @@ const DynamicPostCard = ({ post }: Props) => {
         <hr className="border-light-gray" />
       </div>
       <Suspense fallback={<CommentLoader />}>
-        <CommentSection postId={_id.toString()} user={post.user} />
+        <CommentSection postId={_id.toString()} />
       </Suspense>
     </article>
   );
