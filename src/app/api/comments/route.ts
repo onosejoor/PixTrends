@@ -1,6 +1,6 @@
 import { sendNotification } from "@/lib/actions/notification";
 import { verifySession } from "@/lib/actions/session";
-import { Comment, Post } from "@/lib/models";
+import { Comment, Post, User } from "@/lib/models";
 import { startSession } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -19,7 +19,8 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const findPost = await Post.findById(postId);
+    const { userId } = await verifySession();
+    const findPost = await Post.exists({ _id: postId });
 
     if (!findPost) {
       return NextResponse.json(
@@ -28,21 +29,24 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const getComments = await Comment.find({ post: postId, parentId: null })
-      .populate([
-        {
-          path: "replies",
-          populate: {
-            path: "user",
-            select: selectedFields,
+    const [currentUser, getComments] = await Promise.all([
+      User.findById(userId).select(["name", "_id", "username", "avatar"]),
+      Comment.find({ post: postId, parentId: null })
+        .populate([
+          {
+            path: "replies",
+            populate: {
+              path: "user",
+              select: selectedFields,
+            },
+            options: { sort: { createdAt: 1 } },
           },
-          options: { sort: { createdAt: 1 } },
-        },
-        { path: "user", select: selectedFields },
-      ])
-      .sort({ createdAt: -1 });
+          { path: "user", select: selectedFields },
+        ])
+        .sort({ createdAt: -1 }),
+    ]);
 
-    return NextResponse.json({ success: true, comments: getComments });
+    return NextResponse.json({ success: true, comments: getComments, currentUser });
   } catch (error) {
     console.log("[GET_COMMENTS_ERROR]: ", error);
     return NextResponse.json(

@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import { User } from "./lib/models";
+import { generateFromEmail } from "unique-username-generator";
 import { createSession, verifySession } from "./lib/actions/session";
 
 export const { signIn, signOut, handlers } = NextAuth({
@@ -21,11 +22,14 @@ export const { signIn, signOut, handlers } = NextAuth({
           );
           return `/create-username?username=${checkUser.username}`;
         } else {
+          const username = await generateUsername(email!);
+
           const newUser = new User({
             email: profile?.email,
             name: profile?.name,
             avatar: profile?.picture,
             password: process.env.GOOGLE_CODE,
+            username,
           });
 
           await Promise.all([
@@ -50,3 +54,15 @@ export const { signIn, signOut, handlers } = NextAuth({
     },
   },
 });
+
+async function generateUsername(email: string): Promise<string> {
+  let username = generateFromEmail(email!, 4);
+  let checkUsernameExists = await User.exists({ username });
+
+  while (checkUsernameExists) {
+    username = generateFromEmail(email!, 4);
+    checkUsernameExists = await User.exists({ username });
+  }
+
+  return username;
+}

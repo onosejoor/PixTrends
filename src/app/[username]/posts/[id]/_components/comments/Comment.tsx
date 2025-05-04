@@ -14,6 +14,7 @@ import CommentEmptyState from "@/components/empty-states/CommentEmptyState";
 
 import CommentForm from "./CommentForm";
 import CommentError from "./CommentsError";
+import Link from "next/link";
 
 dayjs.extend(relativeTime);
 
@@ -22,24 +23,18 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 type ApiResponse = {
   success: boolean;
   comments: IComment[];
+  currentUser: IUserPreview;
 };
 
 type CardProps = {
-  user: IUserPreview;
   postId: string;
   comment: IComment;
+  currentUser: IUserPreview;
   replyingTo: string;
   setReplyingAction: (id: string) => void;
 };
 
-export default function CommentSection({
-  postId,
-  user,
-}: {
-  postId: string;
-
-  user: IUserPreview;
-}) {
+export default function CommentSection({ postId }: { postId: string }) {
   const { data, isLoading, error } = useSWR<ApiResponse>(
     `/api/comments?postId=${postId}`,
     fetcher,
@@ -58,17 +53,17 @@ export default function CommentSection({
     return <CommentLoader />;
   }
 
-  const { comments } = data!;
+  const { comments, currentUser } = data!;
 
   return (
     <div className="mx-auto w-full">
-      <CommentForm postId={postId} user={user} />
+      {currentUser && <CommentForm postId={postId} currentUser={currentUser} />}
 
       <div className="divide-light-gray divide-y">
         {comments.length > 0 ? (
           comments.map((comment) => (
             <CommentCards
-              user={user}
+              currentUser={currentUser}
               postId={postId}
               key={comment._id.toString()}
               replyingTo={replyingTo}
@@ -87,17 +82,20 @@ export default function CommentSection({
 const CommentCards = ({
   comment,
   setReplyingAction,
-  user,
   replyingTo,
   postId,
+  currentUser,
 }: CardProps) => {
   const isReplying = replyingTo === comment._id.toString();
   return (
     <div className="flex flex-col gap-4 py-5">
-      <div className="flex items-center gap-4">
+      <Link
+        href={`/${comment.user.username}`}
+        className="flex items-center gap-4"
+      >
         <Img
           className="size-10 rounded-full"
-          src={"/images/chal.png"}
+          src={comment.user.avatar}
           alt={`${comment.user.name}'s avatar`}
         />
         <div className="flex items-start justify-between">
@@ -110,10 +108,12 @@ const CommentCards = ({
             </span>
           </div>
         </div>
-      </div>
+      </Link>
 
       <div className="flex-1 space-y-2">
-        <p className="text-secondary text-sm xsm:text-base">{comment.content}</p>
+        <p className="text-secondary xsm:text-base text-sm">
+          {comment.content}
+        </p>
 
         <div className="text-gray flex items-center gap-4 pt-1 text-sm">
           <span>{dayjs(comment.createdAt).fromNow()}</span>
@@ -135,17 +135,17 @@ const CommentCards = ({
             parentId={comment._id.toString()}
             postId={postId}
             reply
-            user={user}
+            currentUser={currentUser}
           />
         )}
 
         {comment.replies.length > 0 && (
-          <div className="divide-light-gray border-light-gray pl-0 xsm:mt-3 space-y-3 divide-y border-l pt-2 xsm:pl-3 md:pl-6">
+          <div className="divide-light-gray border-light-gray xsm:mt-3 xsm:pl-3 space-y-3 divide-y border-l pt-2 pl-0 md:pl-6">
             {comment.replies.map((reply) => (
-              <div key={reply._id.toString()} className="flex gap-4 py-5 px-5">
+              <div key={reply._id.toString()} className="flex gap-4 px-5 py-5">
                 <Img
                   className="size-10 rounded-full"
-                  src={"/images/chal.png"}
+                  src={reply.user.avatar}
                   alt={`${reply.user.name}'s avatar`}
                 />
 
@@ -165,10 +165,6 @@ const CommentCards = ({
 
                   <div className="text-gray flex items-center gap-4 pt-1 text-xs">
                     <span>{dayjs(reply.createdAt).fromNow()}</span>
-                    <div className="flex items-center gap-1">
-                      <Heart className="h-3.5 w-3.5" />
-                      {/* <span>{reply.likes}</span> */}
-                    </div>
                   </div>
                 </div>
               </div>

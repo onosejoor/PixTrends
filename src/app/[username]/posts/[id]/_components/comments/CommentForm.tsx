@@ -2,7 +2,7 @@ import Img from "@/components/Img";
 import Spinner from "@/components/loaders/Spinner";
 import { cx } from "@/components/utils";
 import { showToast } from "@/hooks/useToast";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Send } from "lucide-react";
 import { FormEvent, useState } from "react";
 import TextAreaAutoRezise from "react-textarea-autosize";
@@ -16,14 +16,14 @@ type ServerResponse = {
 type CommentProps = {
   parentId?: string | null;
   postId: string;
-  user: IUserPreview;
+  currentUser: IUserPreview;
   reply?: boolean;
 };
 
 export default function CommentForm({
   parentId,
   postId,
-  user,
+  currentUser,
   reply,
 }: CommentProps) {
   const [text, setText] = useState("");
@@ -64,11 +64,14 @@ export default function CommentForm({
         mutate("/api/comments");
       }
     } catch (error) {
-      setLoading(false);
+      console.log("error creating comments: ", error);
+
       showToast({
         variants: "error",
         message:
-          error instanceof Error ? error.message : "Error creating comment",
+          error instanceof AxiosError
+            ? (error.response?.statusText as string)
+            : "Error creating comment",
       });
     } finally {
       setLoading(false);
@@ -97,18 +100,21 @@ export default function CommentForm({
         mutate("/api/comments");
       }
     } catch (error) {
-      setLoading(false);
+      console.log("error creating comments: ", error);
+
       showToast({
         variants: "error",
         message:
-          error instanceof Error ? error.message : "Error creating comment",
+          error instanceof AxiosError
+            ? (error.response?.statusText as string)
+            : "Error creating comment",
       });
     } finally {
       setLoading(false);
     }
   }
 
-  const { avatar, username } = user;
+  const { avatar, username } = currentUser;
   return (
     <form className="mb-8" onSubmit={submitCondition}>
       <div className="mb-6 flex gap-4">

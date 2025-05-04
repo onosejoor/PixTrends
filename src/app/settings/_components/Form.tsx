@@ -37,11 +37,10 @@ const SettingsForm = ({ data }: Props) => {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
-  const { name, email, bio, avatar, imgFile } = formData;
+  const { name, email, bio, avatar, imgFile, username } = formData;
   const maxLength = 150;
 
   const isDisabled = bio.length > maxLength || pending;
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement & HTMLTextAreaElement>,
   ) => {
@@ -70,7 +69,7 @@ const SettingsForm = ({ data }: Props) => {
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    const fields = ["name", "avatar", "email"];
+    const fields = ["name", "avatar", "email", "username"];
 
     const isEmptyFields = fields.some(
       (field) => !formData[field as keyof Omit<FormData, "imgFile">].trim(),
@@ -160,6 +159,21 @@ const SettingsForm = ({ data }: Props) => {
               type="text"
               placeholder="Enter your full name"
               className="border-light-gray text-primary focus:border-accent w-full rounded-md border bg-transparent py-3 pl-3 focus:outline-none"
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-secondary flex items-center gap-2 text-sm font-medium">
+              <User size={16} className="text-gray" />
+              Username
+            </label>
+            <input
+              onChange={handleChange}
+              name="username"
+              value={username}
+              type="text"
+              placeholder="Enter your username"
+              className="border-light-gray text-primary focus:border-accent w-full rounded-md border bg-transparent py-3 pl-3 focus:outline-none disabled:opacity-80"
             />
           </div>
 

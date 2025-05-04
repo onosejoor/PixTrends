@@ -65,7 +65,12 @@ export function getMessage(
   user: INotification["sender"],
 ) {
   const username = (
-    <Link href={`/${user.username}`} className="text-primary hover:underline font-semibold">{user.username}</Link >
+    <Link
+      href={`/${user.username || user.name}`}
+      className="text-primary font-semibold hover:underline"
+    >
+      {user.username}
+    </Link>
   );
 
   switch (type) {

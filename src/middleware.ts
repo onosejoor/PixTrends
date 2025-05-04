@@ -19,14 +19,14 @@ export async function middleware(req: NextRequest) {
     );
   }
 
-  if (!username && isAuth && req.method === "POST") {
-    return NextResponse.redirect(new URL("/create-username", req.nextUrl));
-  }
-
   const isProtected = protectedRoutes.some((regex) => regex.test(path));
 
   if (isProtected && !isAuth) {
     return NextResponse.redirect(new URL("/signin", req.nextUrl));
+  }
+
+  if (isProtected && isAuth && !username) {
+    return NextResponse.redirect(new URL("/create-username", req.nextUrl));
   }
 
   return NextResponse.next();
