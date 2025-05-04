@@ -3,6 +3,11 @@
 import { createTransport, SendMailOptions } from "nodemailer";
 import { OTP, User } from "../models";
 import { generate } from "otp-generator";
+import connectDB from "../db";
+
+if (!global.mongoose) {
+  await connectDB();
+}
 
 const EMAIL_USER = process.env.EMAIL_USER!;
 const APP_PASSWORD = process.env.APP_PASSWORD!;
@@ -17,22 +22,19 @@ const transporter = createTransport({
 
 export async function sendOTP(email: string, username: string) {
   try {
-    const checkUser = await User.findOne({ email });
-    const checkOtp = await OTP.findOne({ email });
+    const [checkUser, checkUserName] = await Promise.all([
+      User.exists({ email }),
+      User.exists({ username }),
+    ]);
 
     if (checkUser) {
       return { success: false, message: "user already exists" };
     }
 
-    const checkUserName = await User.findOne({ username });
-
     if (checkUserName) {
       return { success: false, message: "username already exists" };
     }
 
-    if (checkOtp) {
-      await checkOtp.deleteOne();
-    }
     const otp = generate(6, {
       upperCaseAlphabets: false,
       specialChars: false,
@@ -83,12 +85,14 @@ export async function sendOTP(email: string, username: string) {
     </table> `,
     };
 
-    const newOtp = new OTP({
-      email,
-      otp,
-    });
+    await OTP.findOneAndUpdate(
+      { email },
+      {
+        otp,
+      },
+      { upsert: true, new: true },
+    );
 
-    await newOtp.save();
     await transporter.sendMail(mailOptions);
 
     return { success: true, message: "OTP Sent successfully" };
