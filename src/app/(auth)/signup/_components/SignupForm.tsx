@@ -86,6 +86,7 @@ export default function SignUpForm() {
         message: "Invalid Username",
         variants: "error",
       });
+      setLoading(false)
 
       return;
     }
