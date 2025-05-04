@@ -1,6 +1,6 @@
 import UserPosts from "./_components/UserPostsComp";
 import { User } from "@/lib/models";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import UserHeader from "./_components/UserHeader";
 import { verifySession } from "@/lib/actions/session";
 import { Metadata } from "next";
@@ -65,6 +65,12 @@ async function checkIsUser(
 
 export default async function UserPage({ params }: Params) {
   const username = (await params).username;
+
+  const { username: authUser } = await verifySession();
+
+  if (!authUser) {
+    redirect("/create-username");
+  }
 
   const checkUser = await User.findOne({ username });
 

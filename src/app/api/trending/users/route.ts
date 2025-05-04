@@ -10,6 +10,7 @@ export async function GET(req: NextRequest) {
       const getUsers = await User.aggregate([
         {
           $match: {
+            $and: [{ username: { $ne: null } }],
             $or: [
               { username: { $regex: query, $options: "i" } },
               { name: { $regex: query, $options: "i" } },

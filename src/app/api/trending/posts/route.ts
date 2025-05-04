@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
         { $sample: { size: limitValue } },
         {
           $match: {
+            $and: [{ username: { $ne: null } }],
             $or: [{ content: { $regex: query, $options: "i" } }],
           },
         },
