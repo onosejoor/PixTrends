@@ -2,9 +2,11 @@
 
 import PostsError from "@/app/_components/posts/error";
 import PostCards from "@/app/_components/posts/PostCards";
+import { TrendingPostsEmptyState } from "@/components/empty-states/PostEmptyState";
 import PostLoader from "@/components/loaders/PostLoader";
 import axios from "axios";
 import { ChartNoAxesColumnIncreasing } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import useSWR, { SWRConfiguration } from "swr";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
@@ -22,8 +24,17 @@ export const swrOptions: SWRConfiguration = {
 };
 
 export default function TrendingPosts() {
+  const searchParams = useSearchParams();
+  const queryParams = new URLSearchParams();
+
+  const query = searchParams.get("query") || "";
+
+  if (query) {
+    queryParams.append("query", query);
+  }
+
   const { data, error, isLoading } = useSWR<APIResponse>(
-    "/api/trending/posts",
+    `/api/trending/posts?${queryParams}`,
     fetcher,
     swrOptions,
   );
@@ -54,11 +65,15 @@ export default function TrendingPosts() {
       </div>
 
       <div className="divide-accent grid gap-5 divide-y">
-        {posts.map((post, index) => (
-          <div key={index} className="py-5">
-            <PostCards post={post} />
-          </div>
-        ))}
+        {posts.length > 0 ? (
+          posts.map((post, index) => (
+            <div key={index} className="py-5">
+              <PostCards post={post} />
+            </div>
+          ))
+        ) : (
+          <TrendingPostsEmptyState />
+        )}
       </div>
     </section>
   );

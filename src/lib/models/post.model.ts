@@ -38,6 +38,8 @@ const postSchema = new Schema<IPost>(
   },
 );
 
+postSchema.index({ content: "text" });
+
 postSchema.index({ user: 1 });
 
 const Post: Model<IPost> =

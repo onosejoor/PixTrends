@@ -38,3 +38,21 @@ export default function EmptyState({ isUser }: EmptyStateProps) {
     </div>
   );
 }
+
+export function TrendingPostsEmptyState() {
+  return (
+    <div className="flex h-[500px] flex-col items-center justify-center p-6">
+      <div className="flex max-w-md flex-col items-center text-center">
+        <div className="mb-8">
+          <EmptyStateIcon />
+        </div>
+
+        <h2 className="mb-4 text-2xl font-bold">
+          No Post for the current query
+        </h2>
+
+        <p className="text-gray mb-10">Try another query</p>
+      </div>
+    </div>
+  );
+}

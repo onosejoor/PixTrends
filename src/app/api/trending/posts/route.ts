@@ -7,14 +7,71 @@ export async function GET(req: NextRequest) {
   const { userId } = await verifySession();
   const searchParams = req.nextUrl.searchParams;
 
-  const { page, limit } = Object.fromEntries(searchParams.entries()) as {
+  const { page, limit, query } = Object.fromEntries(searchParams.entries()) as {
     page: string;
     limit: string;
+    query: string;
   };
 
   const nextPage = Number(page) || 1;
   const limitValue = Number(limit) || 10;
   try {
+    if (query) {
+      const posts = await Post.aggregate([
+        { $sample: { size: limitValue } },
+        {
+          $match: {
+            $or: [{ content: { $regex: query, $options: "i" } }],
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "user",
+            foreignField: "_id",
+            as: "user",
+          },
+        },
+        { $unwind: "$user" },
+        {
+          $addFields: {
+            likesCount: { $size: "$likes" },
+            viewsCount: { $size: "$views" },
+            isLiked: {
+              $in: [new Types.ObjectId(userId as string), "$likes"],
+            },
+            isUser: {
+              $eq: ["$user._id", new Types.ObjectId(userId as string)],
+            },
+          },
+        },
+        { $sort: { likesCount: -1, viewsCount: -1 } },
+
+        { $limit: limitValue },
+        { $skip: (nextPage - 1) * limitValue },
+
+        {
+          $project: {
+            content: 1,
+            createdAt: 1,
+            images: 1,
+            comments: 1,
+            likes: 1,
+            isLiked: 1,
+            isUser: 1,
+            views: 1,
+            "user._id": 1,
+            "user.username": 1,
+            "user.avatar": 1,
+          },
+        },
+      ]);
+      return NextResponse.json(
+        { success: true, posts, userId },
+        { status: 200 },
+      );
+    }
+
     const posts = await Post.aggregate([
       { $sample: { size: limitValue } },
       { $match: { user: { $ne: userId } } },

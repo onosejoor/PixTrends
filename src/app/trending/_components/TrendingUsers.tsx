@@ -8,6 +8,7 @@ import { Users } from "lucide-react";
 import Link from "next/link";
 import useSWR from "swr";
 import { swrOptions } from "./TrendingPosts";
+import { useSearchParams } from "next/navigation";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -17,8 +18,17 @@ type APIResponse = {
 };
 
 export function TrendingUsers() {
+  const searchParams = useSearchParams();
+  const queryParams = new URLSearchParams()
+
+  const query = searchParams.get("query") || "";
+
+  if (query) {
+    queryParams.append("query", query)
+  }
+
   const { data, error, isLoading } = useSWR<APIResponse>(
-    "/api/trending/users",
+    `/api/trending/users?${queryParams}`,
     fetcher,
     swrOptions,
   );

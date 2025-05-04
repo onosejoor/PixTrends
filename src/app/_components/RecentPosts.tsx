@@ -11,6 +11,7 @@ import { usePathname } from "next/navigation";
 import useSWR from "swr";
 import RecentPostsError from "./error";
 import TextHighlighter from "../create/_components/TextHighlighter";
+import { SearchBar } from "../trending/_components/SearchBar";
 
 dayjs.extend(relativeTime);
 
@@ -20,22 +21,31 @@ const protectedRoutes = ["/signin", "/signup"];
 
 type APIResponse = {
   success: true;
-  posts: IPost[];
+  data: IPost[];
 };
 
 export function RecentPosts() {
   const path = usePathname();
 
-  const options = {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-  };
-
   const isProtectedRoute = protectedRoutes.some((route) => route === path);
-  const url = isProtectedRoute ? null : "/api/recents";
 
-  const { isLoading, data, error } = useSWR<APIResponse>(url, fetcher, options);
+  function getLink() {
+    if (isProtectedRoute) {
+      return null;
+    }
+    if (path === "/trending") {
+      return "/api/recents/users";
+    }
+    return "/api/recents";
+  }
+
+  const url = getLink();
+
+  const {
+    isLoading,
+    data: response,
+    error,
+  } = useSWR<APIResponse>(url, fetcher);
 
   if (isProtectedRoute) {
     return;
@@ -49,17 +59,22 @@ export function RecentPosts() {
     return <RecentPostsLoader />;
   }
 
-  const { posts } = data!;
+  const { data } = response!;
+
+  const isTrendingRoute = path === "/trending";
 
   return (
     <div className="border-light-gray sticky top-0 bottom-0 hidden h-screen shrink-0 flex-col gap-5 border-l-2 bg-white p-5 py-10 lg:flex lg:w-[400px]">
-      <h2 className="text-primary text-lg font-semibold">Recent Posts</h2>
+      {!isTrendingRoute && (
+        <div className="*:w-full">
+          <SearchBar />
+        </div>
+      )}
+      <h2 className="text-primary text-lg font-semibold">
+        {url === "/api/recents" ? "Recent Posts" : "Suggested Users"}
+      </h2>
 
-      <div className="grid h-fit gap-5">
-        {posts.map((post, index) => (
-          <PostCards {...post} key={index} />
-        ))}
-      </div>
+      <div className="grid h-fit gap-5">{returnData(data, url!)}</div>
     </div>
   );
 }
@@ -96,3 +111,55 @@ const PostCards = ({ content, user, createdAt, _id }: IPost) => {
     </Link>
   );
 };
+
+const UserCard = ({ user }: { user: IUserPreview }) => {
+  const { followers, following, username } = user;
+  return (
+    <Link
+      href={`/${username}`}
+      className="border-light-gray hover:border-accent rounded-lg border bg-white p-4"
+    >
+      <div className="flex items-start gap-3">
+        <Img
+          src={user.avatar}
+          alt={user.name}
+          className="border-accent h-12 w-12 rounded-full border-2 object-cover"
+        />
+        <div className="min-w-0 flex-1">
+          <h4 className="text-primary truncate font-semibold">{user.name}</h4>
+          <p className="text-gray mb-1 text-sm">{user.username}</p>
+          <p className="text-secondary mb-2 line-clamp-2 text-sm">{user.bio}</p>
+          <div className="flex items-center gap-5">
+            <div className="flex items-center gap-2">
+              <span className="text-primary text-sm font-medium">
+                {followers.length.toLocaleString()}
+              </span>
+              <span className="text-gray text-sm">followers</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-primary text-sm font-medium">
+                {following.length.toLocaleString()}
+              </span>
+              <span className="text-gray text-sm">following</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+};
+
+function returnData(data: IUserPreview[] | IPost[], route: string) {
+  switch (route) {
+    case "/api/recents/users":
+      return (data as IUserPreview[]).map((user) => (
+        <UserCard user={user} key={user._id.toString()} />
+      ));
+    case "/api/recents":
+      return (data as IPost[]).map((post, index) => (
+        <PostCards {...post} key={index} />
+      ));
+    default:
+      break;
+  }
+}

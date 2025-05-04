@@ -27,7 +27,7 @@ export async function GET() {
       },
     ]);
 
-    return NextResponse.json({ success: true, posts }, { status: 200 });
+    return NextResponse.json({ success: true, data: posts }, { status: 200 });
   } catch (error) {
     console.log("[GET_RECENT_POSTS_ERROR]: ", error);
 

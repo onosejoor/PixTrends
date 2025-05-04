@@ -55,6 +55,7 @@ userSchema.pre("save", async function (next) {
   return next();
 });
 
+userSchema.index({ name: "text", username: "text" });
 userSchema.index({ email: 1, username: 1 });
 
 const User: Model<IUser> =
