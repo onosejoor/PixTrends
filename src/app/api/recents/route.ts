@@ -4,10 +4,9 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const posts = await Post.aggregate([
-      { $match: { content: { $ne: null } } },
-      { $sort: { createdAt: 1 } },
       { $sample: { size: 3 } },
-
+      { $match: { content: { $ne: "" } } },
+      { $sort: { createdAt: 1 } },
       {
         $lookup: {
           from: "users",

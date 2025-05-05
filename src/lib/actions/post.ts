@@ -9,7 +9,8 @@ export async function likePost(postId: string) {
   const { isAuth, userId } = await verifySession();
 
   if (!isAuth) {
-    return { success: false, message: "Unauthorized!" };
+    redirect("/signin")
+    return { success: false, message: "login to continue" };
   }
   try {
     const findPost = await Post.findById(postId);

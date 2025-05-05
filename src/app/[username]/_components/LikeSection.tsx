@@ -28,9 +28,6 @@ export default function LikeSection({
   const [likeCount, setLikeCount] = useState(likes);
 
   const handleClick = async () => {
-    setLikeCount(like ? likeCount - 1 : likeCount + 1);
-    setLike(!like);
-
     const { success, message } = await likePost(postId);
 
     if (!success) {
@@ -38,7 +35,10 @@ export default function LikeSection({
         message: message!,
         variants: "error",
       });
+      return;
     }
+    setLikeCount(like ? likeCount - 1 : likeCount + 1);
+    setLike(!like);
   };
 
   return (

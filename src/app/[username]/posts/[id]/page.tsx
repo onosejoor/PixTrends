@@ -1,8 +1,8 @@
-import { Post } from "@/lib/models";
 import { notFound } from "next/navigation";
 import PostPage from "./_components/PostPage";
 import { Metadata } from "next";
 import { verifySession } from "@/lib/actions/session";
+import { findPostOne, findPostPopulate } from "@/lib/actions/findData";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -11,19 +11,15 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const id = (await params).id;
 
-  const findUser = await Post.findById(id).populate<{ user: IUserPreview }>(
-    "user",
-  );
+  const findUser = await findPostPopulate(id);
 
   if (!findUser) {
     return notFound();
   }
 
-  const {
-    content,
-    images,
-    user: { name, username, avatar },
-  } = findUser;
+  const { content, images, user } = findUser;
+
+  const { name, username, avatar } = user;
 
   return {
     title: `${name} (${username}) `,
@@ -40,7 +36,7 @@ export default async function DynamicPost({ params }: Props) {
   const id = (await params).id;
   const { userId } = await verifySession();
 
-  const getPost = await Post.findById(id);
+  const getPost = await findPostOne(id);
 
   if (!getPost) {
     return notFound();

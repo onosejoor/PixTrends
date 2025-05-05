@@ -1,9 +1,9 @@
 import UserPosts from "./_components/UserPostsComp";
-import { User } from "@/lib/models";
 import { notFound, redirect } from "next/navigation";
 import UserHeader from "./_components/UserHeader";
 import { verifySession } from "@/lib/actions/session";
 import { Metadata } from "next";
+import { findUser } from "@/lib/actions/findData";
 
 type Params = {
   params: Promise<{ username: string }>;
@@ -12,13 +12,13 @@ type Params = {
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const username = (await params).username;
 
-  const findUser = await User.findOne({ username });
+  const checkUser = await findUser(username);
 
-  if (!findUser) {
+  if (!checkUser) {
     return notFound();
   }
 
-  const { name, bio, avatar } = findUser;
+  const { name, bio, avatar } = checkUser;
 
   return {
     title: {
@@ -72,7 +72,7 @@ export default async function UserPage({ params }: Params) {
     redirect("/create-username");
   }
 
-  const checkUser = await User.findOne({ username });
+  const checkUser = await findUser(username);
 
   if (!checkUser) {
     return notFound();
