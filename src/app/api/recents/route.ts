@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const posts = await Post.aggregate([
       { $sample: { size: 3 } },
-      { $sort: { createdAt: -1 } },
+      { $sort: { createdAt: 1 } },
       {
         $lookup: {
           from: "users",
