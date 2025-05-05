@@ -16,6 +16,7 @@ import PostCardModal from "@/app/_components/posts/modal";
 import { Suspense } from "react";
 import CommentLoader from "@/components/loaders/CommentLoader";
 import TextHighlighter from "@/app/create/_components/TextHighlighter";
+import { ImagePopup } from "@/components/ImgPopUp";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -112,10 +113,10 @@ const DynamicPostCard = ({ post }: Props) => {
                   ],
                 )}
               >
-                <Img
+                <ImagePopup
                   src={image}
+                  alt={`Post image ${index + 1}`}
                   className="size-full rounded-[10px] object-cover"
-                  alt={`img-${index}`}
                 />
               </picture>
             ))}

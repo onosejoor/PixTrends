@@ -3,11 +3,11 @@
 import axios from "axios";
 import useSWR from "swr";
 import PageLoader from "../loading";
-import Img from "@/components/Img";
 import { backgrounds } from "./bg-gradients";
 import { cx } from "@/components/utils";
 import FollowBtn from "./FollowBtn";
 import ProfileError from "../error";
+import { ImagePopup } from "@/components/ImgPopUp";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -53,7 +53,7 @@ export default function UserHeader({ username, status }: Props) {
 
       <header className="-mt-15 grid gap-10 px-7.5 sm:px-10">
         <div className="flex items-end gap-5">
-          <Img
+          <ImagePopup
             src={avatar}
             alt={`${name}'s avatar`}
             className="border-light-gray shadow-avatar xsm:size-37.5 size-25 rounded-full border-2"
@@ -62,13 +62,13 @@ export default function UserHeader({ username, status }: Props) {
         </div>
 
         <div className="*:mb-5">
-          <div className="divide-light-gray xs:flex-row flex flex-col gap-5 xs:divide-x">
+          <div className="divide-light-gray xs:flex-row xs:divide-x flex flex-col gap-5">
             <div className="grid gap-2 pr-5">
               <b className="text-primary text-lg">{name}</b>
               <p className="text-secondary text-sm font-medium">@{username}</p>
             </div>
 
-            <div className="flex gap-10 xs:gap-5">
+            <div className="xs:gap-5 flex gap-10">
               <StatBlock label="Followers" count={followers.length} />
               <StatBlock label="Following" count={following.length} />
             </div>
@@ -85,7 +85,7 @@ export default function UserHeader({ username, status }: Props) {
 
 function StatBlock({ label, count }: { label: string; count: number }) {
   return (
-    <div className="grid justify-items-center gap-1 xs:px-5">
+    <div className="xs:px-5 grid justify-items-center gap-1">
       <b className="text-gray text-lg">{count}</b>
       <p className="text-secondary text-sm font-medium">{label}</p>
     </div>

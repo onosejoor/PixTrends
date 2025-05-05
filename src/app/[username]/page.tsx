@@ -66,9 +66,9 @@ async function checkIsUser(
 export default async function UserPage({ params }: Params) {
   const username = (await params).username;
 
-  const { username: authUser } = await verifySession();
+  const { username: authUser, isAuth } = await verifySession();
 
-  if (!authUser) {
+  if (!authUser && isAuth) {
     redirect("/create-username");
   }
 
