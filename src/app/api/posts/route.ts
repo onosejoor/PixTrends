@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!text && images && images.length < 1) {
+    if (!text && images.length < 1) {
       return NextResponse.json(
         { success: false, message: "Either text, or images must be filled!" },
         { status: 400 },
@@ -96,18 +96,20 @@ export async function POST(req: NextRequest) {
 
     let imageUrls: string[] = [];
 
-    const { success, urls, message } = await uploadImages(images as File[]);
+    if (images.length > 0) {
+      const { success, urls, message } = await uploadImages(images as File[]);
 
-    if (!success) {
-      console.log("[POST_UPLOAD_IMAGES_ERROR]:", message);
+      if (!success) {
+        console.log("[POST_UPLOAD_IMAGES_ERROR]:", message);
 
-      return NextResponse.json(
-        { success: false, message: "Error uploading images!" },
-        { status: 500 },
-      );
+        return NextResponse.json(
+          { success: false, message: "Error uploading images!" },
+          { status: 500 },
+        );
+      }
+
+      imageUrls = urls!;
     }
-
-    imageUrls = urls!;
 
     const newPost = new Post({
       user: userId,
