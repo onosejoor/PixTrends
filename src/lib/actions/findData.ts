@@ -26,7 +26,7 @@ export async function findPostPopulate(id: string) {
 }
 
 export async function findPostOne(id: string) {
-  const findOnePost = await Post.findById(id).select(["views user"]);
+  const findOnePost = await Post.findById(id).select(["views", "user"]);
 
   return findOnePost;
 }
