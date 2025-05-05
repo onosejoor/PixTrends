@@ -87,6 +87,7 @@ const SettingsForm = ({ data }: Props) => {
       name,
       email,
       avatar,
+      username,
       bio,
     };
 
