@@ -52,17 +52,16 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    const findByUsername = await User.exists({ username });
+    if (username !== sessionUsername) {
+      const findByUsername = await User.exists({ username });
 
-    if (findByUsername) {
-      return NextResponse.json(
-        {
+      if (findByUsername) {
+        return NextResponse.json({
           success: false,
           message: "Username exists",
           username,
-        },
-        { status: 400 },
-      );
+        });
+      }
     }
 
     await User.findByIdAndUpdate(userId, {
