@@ -11,7 +11,7 @@ export async function GET() {
       {
         $match: {
           $and: [
-            { _id: { $ne: userId } },
+            { _id: { $ne: new Types.ObjectId(userId as string) } },
             { followers: { $ne: new Types.ObjectId(userId as string) } },
             { following: { $ne: new Types.ObjectId(userId as string) } },
           ],
