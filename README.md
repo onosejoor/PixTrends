@@ -1,136 +1,139 @@
-# 🌟 PixTrends: Discover & Share Visual Trends! 📸🎨
+# **📸 PixTrends: Capture the Moment, Share the Vision! ✨**
 
-PixTrends is a vibrant platform built with Next.js for sharing and discovering the latest trends in photography, art, and design. Join a community of creatives and explore stunning visuals!
+PixTrends is your go-to platform for discovering and sharing the latest trends in photography, art, and design. Connect with a vibrant community of creatives, get inspired, and showcase your unique perspective!
 
 ## 🚀 Installation
 
 Get PixTrends up and running locally with these simple steps:
 
-- ⬇️ **Clone the Repository**:
-  ```bash
-  git clone https://github.com/onosejoor/PixTrends.git
-  cd PixTrends
-  ```
+- ⬇️ **Clone the repository:**
 
-- ⚙️ **Install Dependencies**:
-  ```bash
-  npm install
-  # or
-  yarn install
-  # or
-  pnpm install
-  ```
+```bash
+git clone https://github.com/onosejoor/PixTrends.git
+cd PixTrends
+```
 
-- 🔑 **Set up Environment Variables**:
+- 📦 **Install dependencies:**
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+- ⚙️ **Set up environment variables:**
+
   - Create a `.env.local` file in the root directory.
-  - Add the following environment variables (refer to `env.example`):
-    ```
-    SESSION_SECRET=""
-    EMAIL_USER=""
-    APP_PASSWORD=""
-    MONGODB_URL=""
-    GOOGLE_CODE=""
-    CLOUDINARY_SECRET=""
-    CLOUDINARY_APIKEY=""
-    CLOUDINARY_PRESET=""
-    CLOUDINARY_CLOUD_NAME=""
-    SERVER_URL=""
-    SSE_URL=""
-    AUTH_GOOGLE_ID=""
-    AUTH_GOOGLE_SECRET=""
-    AUTH_SECRET=""
-    ```
+  - Copy the contents from `env.example` and fill in the required values:
 
-- 🏃‍♂️ **Run the Development Server**:
-  ```bash
-  npm run dev
-  # or
-  yarn dev
-  # or
-  pnpm dev
-  ```
-  Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
+```
+SESSION_SECRET=""
+EMAIL_USER=""
+APP_PASSWORD=""
+MONGODB_URI=""
+GOOGLE_CODE=""
+CLOUDINARY_SECRET=""
+CLOUDINARY_APIKEY=""
+CLOUDINARY_PRESET=""
+CLOUDINARY_CLOUD_NAME=""
+SERVER_URL=""
+SSE_URL=""
+AUTH_GOOGLE_ID=""
+AUTH_GOOGLE_SECRET=""
+AUTH_SECRET=""
+```
 
-## 💡 Usage
+- 🚀 **Run the development server:**
 
-Explore PixTrends and engage with the community! Here are some examples:
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser to view PixTrends!
+
+## 🖼️ Usage
+
+Here are some cool things you can do with PixTrends:
 
 <details>
-<summary><b>Creating a Post</b></summary>
-<br>
-   1. Navigate to the `/create` route to access the post creation form.
-   2. Enter your content and upload any images you want to include.
-   3. Click the "Post" button to share your masterpiece with the world!
+<summary>✍️ Create a Post</summary>
 
-```tsx
-// Example of a Create Post Component
-import CreatePostForm from './_components/Form';
+1.  Navigate to the "Create" page.
+2.  Write your thoughts, add hashtags, and paste links.
+3.  Upload up to 4 images to make your post pop!
+4.  Hit "Post" and share your vision with the world.
 
-export default async function CreatePostPage() {
-  return <CreatePostForm />;
-}
+![Create Post](https://i.imgur.com/your-create-post-screenshot.png)
+
+```jsx
+<CreatePostForm user={findUser} />;
 ```
+
 </details>
 
 <details>
-<summary><b>Exploring Trending Content</b></summary>
-<br>
-   1. Visit the `/trending` route to discover popular posts and users.
-   2. Use the search bar to find specific trends or users.
-   3. Engage with the community by liking and commenting on posts.
+<summary>👤 Edit Your Profile</summary>
 
-```tsx
-// Example of using SearchBar Component
-import { SearchBar } from "./_components/SearchBar";
-function TrendingPage() {
-  return (
-    <div className="grid gap-5 py-10">
-      <SearchBar />
-    </div>
-  );
-}
+1.  Go to your profile page and click "Edit Profile."
+2.  Update your avatar, bio, and other details.
+3.  Save the changes to showcase your updated persona!
+
+![Edit Profile](https://i.imgur.com/your-edit-profile-screenshot.png)
+
+```jsx
+<SettingsForm data={userDetails!} />;
 ```
+
 </details>
 
 ## ✨ Features
 
-- ✅ **User Authentication**: Secure sign-up and sign-in using NextAuth.js.
-- ✍️ **Post Creation**: Create and share captivating visual content.
-- 🚀 **Trending Discovery**: Explore the latest trends in photography, art, and design.
-- 🔔 **Real-time Notifications**: Stay updated with real-time notifications via Server-Sent Events (SSE).
-- 👤 **User Profiles**: Customize your profile and showcase your creativity.
-- 💬 **Commenting System**: Engage in discussions with other users.
-- ❤️ **Liking**: Show appreciation for content you love.
-- 🔎 **Search**: Find content and users easily.
-- ⚙️ **Settings**: Customize your account settings.
+- 🏠 **Home Feed:** Discover the latest and greatest posts from across the community.
+- 🔥 **Trending:** Stay up-to-date with the hottest trends in photography, art, and design.
+- 🔔 **Notifications:** Never miss a beat with real-time updates on likes, comments, and follows.
+- 👤 **Profiles:** Showcase your work and connect with fellow creatives.
+- ✍️ **Create**: Share your vision with the world.
+- 🔍 **Search:** Find users and content that inspire you.
 
 ## 🛠️ Technologies Used
 
-| Technology         | Link                                       |
-| ------------------ | ------------------------------------------ |
-| Next.js            | [https://nextjs.org/](https://nextjs.org/) |
-| TypeScript         | [https://www.typescriptlang.org/](https://www.typescriptlang.org/)             |
-| Tailwind CSS       | [https://tailwindcss.com/](https://tailwindcss.com/)           |
-| MongoDB            | [https://www.mongodb.com/](https://www.mongodb.com/)             |
-| NextAuth.js        | [https://next-auth.js.org/](https://next-auth.js.org/)              |
-| Mongoose | [https://mongoosejs.com/](https://mongoosejs.com/) |
-| Cloudinary | [https://cloudinary.com/](https://cloudinary.com/)             |
-| SWR | [https://swr.vercel.app/](https://swr.vercel.app/) |
+| Technology          | Link                                         |
+| :------------------ | :------------------------------------------- |
+| Next.js             | [https://nextjs.org/](https://nextjs.org/)   |
+| TypeScript          | [https://www.typescriptlang.org/](https://www.typescriptlang.org/) |
+| Tailwind CSS        | [https://tailwindcss.com/](https://tailwindcss.com/) |
+| MongoDB             | [https://www.mongodb.com/](https://www.mongodb.com/) |
+| NextAuth.js         | [https://next-auth.js.org/](https://next-auth.js.org/)   |
+| Cloudinary          | [https://cloudinary.com/](https://cloudinary.com/)   |
+| Ioredis             | [https://ioredis.readthedocs.io/en/stable/](https://ioredis.readthedocs.io/en/stable/)   |
+| Lucide React        | [https://lucide.dev/](https://lucide.dev/)   |
+| SWR                 | [https://swr.vercel.app/](https://swr.vercel.app/)   |
 
 ## 🤝 Contributing
 
-We welcome contributions from the community! Here are the guidelines:
+We welcome contributions to PixTrends! Please follow these guidelines:
 
-- 🐛 **Report Bugs**: Submit detailed bug reports.
-- 🛠️ **Suggest Enhancements**: Share your ideas for new features.
-- 🧑‍💻 **Submit Pull Requests**: Contribute code improvements.
-
-Please ensure your code adheres to the project's style guidelines.
+- 🐛 Report bugs and suggest features.
+- 👩‍💻 Submit pull requests with clear descriptions.
+- 📖 Follow the project's coding style and conventions.
 
 ## 📜 License
 
 This project is licensed under the [MIT License](LICENSE).
 
-## 👨‍💻 Author Info
+## 🧑‍💻 Author Info
 
-- Author: [Onos Ejoor]("https://onos-ejoor.vercel.app")
+- Onosetale Onosejoor
+  - [GitHub](https://github.com/onosejoor)
+  - [Twitter](https://twitter.com/DevText16)
+  - [PixTrends](https://pixtrends.vercel.app/DevText16)
+
+---
+
+[![Readme was generated by Dokugen](https://img.shields.io/badge/Readme%20was%20generated%20by-Dokugen-brightgreen)](https://www.npmjs.com/package/dokugen)

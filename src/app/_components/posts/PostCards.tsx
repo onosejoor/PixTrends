@@ -10,6 +10,7 @@ import { cx } from "@/components/utils";
 import LikeSection from "@/app/[username]/_components/LikeSection";
 import PostCardModal from "./modal";
 import TextHighlighter from "@/app/create/_components/TextHighlighter";
+import { ImagePopup } from "@/components/ImgPopUp";
 
 dayjs.extend(relativeTime);
 
@@ -64,7 +65,7 @@ function PostCards({ post }: Props) {
             <div className="flex items-start gap-4">
               <Img
                 src={user.avatar}
-                className="size-10 xs:size-12  rounded-full object-cover"
+                className="xs:size-12 size-10 rounded-full object-cover"
                 alt={`${user.username}'s avatar`}
               />
               <div className="grid gap-1">
@@ -112,10 +113,10 @@ function PostCards({ post }: Props) {
                   className={cx("w-full shrink-0", imageClass[images.length])}
                   onClick={stopPropagation}
                 >
-                  <Img
+                  <ImagePopup
                     src={image}
-                    className="h-full w-full rounded-lg object-cover"
                     alt={`Post image ${index + 1}`}
+                    className="h-full w-full rounded-lg object-cover"
                   />
                 </picture>
               ))}
