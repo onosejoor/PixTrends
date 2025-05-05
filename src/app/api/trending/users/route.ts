@@ -37,6 +37,11 @@ export async function GET(req: NextRequest) {
     }
 
     const getUsers = await User.aggregate([
+      {
+        $match: {
+          $and: [{ username: { $ne: null } }],
+        },
+      },
       { $sample: { size: 3 } },
       { $limit: 3 },
 

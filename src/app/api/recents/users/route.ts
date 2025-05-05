@@ -14,6 +14,7 @@ export async function GET() {
             { _id: { $ne: new Types.ObjectId(userId as string) } },
             { followers: { $ne: new Types.ObjectId(userId as string) } },
             { following: { $ne: new Types.ObjectId(userId as string) } },
+            { username: { $ne: null } },
           ],
         },
       },
