@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
-const MONGODB_URL = process.env.MONGODB_URL || "";
+const MONGODB_URI = process.env.MONGODB_URI || "";
 
-if (!MONGODB_URL) {
+if (!MONGODB_URI) {
   throw new Error("No MongoDB url is provided in the .env file!");
 }
 
@@ -22,7 +22,7 @@ export default async function connectDB() {
       bufferTimeoutMS: 30000,
     };
     cached_connection.promise = mongoose
-      .connect(MONGODB_URL, opts)
+      .connect(MONGODB_URI, opts)
       .then((mongoose) => {
         console.log("MongoDB connected!");
         return mongoose;
