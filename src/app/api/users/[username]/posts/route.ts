@@ -33,8 +33,7 @@ export async function GET(req: NextRequest, { params }: Params) {
 
     const getPosts = await Post.aggregate([
       { $match: { user: checkUser._id } },
-      { $sample: { size: limitValue } },
-
+      { $sort: { createdAt: 1 } },
       {
         $skip: (nextPage - 1) * limitValue,
       },

@@ -2,13 +2,15 @@
 
 import NotificationEmptyState from "@/components/empty-states/NotificationEmptyState";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
-import useSWR from "swr";
 import NotificationLoader from "@/components/loaders/NotificationLoader";
 import NotificationCard from "./NotificationCard";
 import NotificationsError from "./notification-error";
 import { eventEmitter } from "@/lib/eventEmitter";
+import useIntersectionObserver from "@/hooks/useIntersectionObserver";
+import useSWRInfinite from "swr/infinite";
+import BottomPostLoader from "@/components/loaders/bottom-post-loader";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -19,18 +21,24 @@ type ApiResponse = {
 };
 
 export default function NotificationsPage() {
-  const { data, error, isLoading, mutate } = useSWR<ApiResponse>(
-    "/api/notifications",
-    fetcher,
-  );
+  const { data, error, mutate, isValidating, setSize, size } =
+    useSWRInfinite<ApiResponse>(
+      (pageIndex) => `/api/notifications?page=${pageIndex + 1}&limit=5`,
+      fetcher,
+    );
+  const ref = useRef<HTMLDivElement | null>(null);
 
-  const [notifications, setNotifications] = useState<INotification[]>([]);
+  const notifications = data ? data.flatMap((not) => not.notifications) : [];
 
-  useEffect(() => {
-    if (data) {
-      setNotifications(data.notifications);
-    }
-  }, [data]);
+  useIntersectionObserver({
+    ref: ref,
+    isValidating,
+    onIntersect: () => {
+      if (!isValidating && data?.[size - 1].notifications.length) {
+        setSize(size + 1);
+      }
+    },
+  });
 
   useEffect(() => {
     const notificationListener = () => {
@@ -48,11 +56,11 @@ export default function NotificationsPage() {
     return <NotificationsError />;
   }
 
-  if (isLoading) {
+  if (!data && size === 1) {
     return <NotificationLoader />;
   }
 
-  const { username } = data!;
+  const { username } = data![0];
 
   return (
     <div className="bg-foreground py-5 sm:px-5">
@@ -70,6 +78,7 @@ export default function NotificationsPage() {
           <NotificationEmptyState />
         )}
       </ul>
+      <BottomPostLoader ref={ref} isValidating={isValidating} />
     </div>
   );
 }

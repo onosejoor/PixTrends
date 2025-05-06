@@ -19,12 +19,12 @@ type APIResponse = {
 
 export function TrendingUsers() {
   const searchParams = useSearchParams();
-  const queryParams = new URLSearchParams()
+  const queryParams = new URLSearchParams();
 
   const query = searchParams.get("query") || "";
 
   if (query) {
-    queryParams.append("query", query)
+    queryParams.append("query", query);
   }
 
   const { data, error, isLoading } = useSWR<APIResponse>(
@@ -34,7 +34,7 @@ export function TrendingUsers() {
   );
 
   if (error) {
-    return <div>error loading users</div>;
+    return;
   }
 
   if (isLoading) {

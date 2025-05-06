@@ -18,14 +18,14 @@ export async function GET(req: NextRequest) {
     const limitValue = Number(limit) || 10;
 
     const getPosts = await Post.aggregate([
-      { $sample: { size: limitValue } },
-
+      { $sort: { createdAt: 1 } },
       {
         $skip: (nextPage - 1) * limitValue,
       },
       {
         $limit: limitValue,
       },
+
       {
         $lookup: {
           from: "users",
@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
       },
     ]);
 
-    return NextResponse.json({ success: true, posts: getPosts, userId });
+    return NextResponse.json({ success: true, posts: getPosts });
   } catch (error) {
     console.log("[GET_HOME_POSTS_ERROR]:", error);
 

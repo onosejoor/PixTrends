@@ -50,3 +50,4 @@ export default async function DynamicPost({ params }: Props) {
 
   return <PostPage postId={getPost.id} />;
 }
+

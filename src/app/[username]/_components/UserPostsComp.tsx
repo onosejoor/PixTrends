@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import dayjs from "dayjs";
-import useSWR, { SWRConfiguration } from "swr";
+import { SWRConfiguration } from "swr";
 import relativeTime from "dayjs/plugin/relativeTime";
 
 import PostLoader from "@/components/loaders/PostLoader";
@@ -10,6 +10,10 @@ import EmptyState from "@/components/empty-states/PostEmptyState";
 
 import PostCards from "../../_components/posts/PostCards";
 import PostsError from "@/app/_components/posts/error";
+import useSWRInfinite from "swr/infinite";
+import useIntersectionObserver from "@/hooks/useIntersectionObserver";
+import { useRef } from "react";
+import BottomPostLoader from "@/components/loaders/bottom-post-loader";
 
 dayjs.extend(relativeTime);
 
@@ -26,26 +30,39 @@ type Props = {
 };
 
 const options: SWRConfiguration = {
-  revalidateIfStale: false,
   revalidateOnFocus: false,
 };
 
 export default function UserPosts({ username, isUser }: Props) {
-  const { data, isLoading, error } = useSWR<APIResponse>(
-    `/api/users/${username}/posts`,
-    fetcher,
-    options,
-  );
+  const BASE_URL = `/api/users/${username}/posts`;
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  const { data, error, isValidating, setSize, size } =
+    useSWRInfinite<APIResponse>(
+      (pageIndex) => `${BASE_URL}?page=${pageIndex + 1}&limit=5`,
+      fetcher,
+      options,
+    );
+
+  const posts = data ? data.flatMap((page) => page.posts) : [];
+
+  useIntersectionObserver({
+    ref: loadMoreRef,
+    isValidating,
+    onIntersect: () => {
+      if (!isValidating && data?.[size - 1]?.posts?.length) {
+        setSize(size + 1);
+      }
+    },
+  });
 
   if (error) {
     return <PostsError />;
   }
 
-  if (isLoading) {
+  if (!data && size === 1) {
     return <PostLoader />;
   }
-
-  const { posts } = data!;
 
   return (
     <div className="grid">
@@ -63,6 +80,7 @@ export default function UserPosts({ username, isUser }: Props) {
           <EmptyState isUser={isUser} />
         )}
       </div>
+      <BottomPostLoader ref={loadMoreRef} isValidating={isValidating} />
     </div>
   );
 }

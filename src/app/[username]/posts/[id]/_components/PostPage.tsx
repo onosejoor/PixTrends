@@ -126,6 +126,7 @@ const DynamicPostCard = ({ post }: Props) => {
       <div className="grid h-fit gap-3">
         <hr className="border-light-gray" />
         <LikeSection
+          isLiked={post.isLiked}
           link={link}
           views={views.length}
           likes={likes.length}

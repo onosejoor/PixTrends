@@ -14,13 +14,14 @@ export async function search(query: string) {
           ],
         },
       },
-      { $limit: 5 },
+
       {
         $addFields: {
           followersCount: { $size: "$followers" },
         },
       },
       { $sort: { followersCount: -1 } },
+      { $limit: 5 },
       {
         $project: {
           _id: 1,

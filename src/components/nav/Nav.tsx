@@ -15,12 +15,8 @@ export default function Nav({ children }: { children: React.ReactNode }) {
 
   return (
     <aside className="border-light-gray xsm:h-full xsm:shadow-none shadow-accent xsm:w-[70px] xsm:bg-light-gray/20 xsm:border-r-2 xsm:px-2.5 fixed bottom-0 left-0 z-10 flex w-full flex-col gap-10 bg-white p-5 shadow-md md:w-[200px] md:px-5">
-      <Link href={"/"}>
-        <Img
-          src={"/images/logo.svg"}
-          className="xsm:block hidden size-12.5"
-          alt="logo image"
-        />
+      <Link href={"/"} className="xsm:block hidden">
+        <Img src={"/images/logo.svg"} className="size-12.5" alt="logo image" />
       </Link>
       <ul className="xsm:flex-col xsm:gap-8.5 flex flex-row justify-between sm:justify-normal">
         {navItems.map(({ name, href, icon }, index) => {
