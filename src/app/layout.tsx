@@ -18,13 +18,13 @@ const geistSans = Geist({
 
 export const metadata: Metadata = {
   title: {
-    default: "Pixtrends",
-    template: "%s - Pixtrends",
+    default: "PixTrends",
+    template: "%s - PixTrends",
   },
   description:
-    "Pixtrends is a platform for sharing and discovering the latest trends in photography, art, and design.",
+    "PixTrends is a platform for sharing and discovering the latest trends in photography, art, and design.",
   keywords: [
-    "Pixtrends",
+    "PixTrends",
     "photography",
     "art",
     "design",
