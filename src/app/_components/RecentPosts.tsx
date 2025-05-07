@@ -89,7 +89,7 @@ const PostCards = ({ content, user, createdAt, _id }: IPost) => {
           <div className="flex items-start gap-5">
             <Img
               src={user.avatar}
-              className="size-7.5 rounded-full"
+              className="size-7.5 rounded-full object-cover"
               alt={user.username}
             />
             <div className="grid h-fit gap-1">

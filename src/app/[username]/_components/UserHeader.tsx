@@ -56,7 +56,7 @@ export default function UserHeader({ username, status }: Props) {
           <ImagePopup
             src={avatar}
             alt={`${name}'s avatar`}
-            className="border-light-gray shadow-avatar xsm:size-37.5 size-25 rounded-full border-2"
+            className="border-light-gray shadow-avatar object-cover xsm:size-37.5 size-25 rounded-full border-2"
           />
           <FollowBtn status={status} mutate={mutate} userId={_id.toString()} />
         </div>
