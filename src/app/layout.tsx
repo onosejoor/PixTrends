@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     "PixTrends is a platform for sharing and discovering the latest trends in photography, art, and design.",
   keywords: [
     "PixTrends",
-    "photography",
+    "photography", 
     "art",
     "design",
     "trends",
