@@ -84,7 +84,7 @@ const DynamicPostCard = ({ post }: Props) => {
         <Link href={`/${username}`} className="flex items-start gap-5">
           <Img
             src={avatar}
-            className="size-10 rounded-full"
+            className="size-10 rounded-full object-cover"
             alt={`${username} image`}
           />
           <div className="grid h-fit gap-1">

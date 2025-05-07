@@ -97,7 +97,7 @@ const CommentCards = ({
         className="flex items-center gap-4"
       >
         <Img
-          className="size-10 rounded-full"
+          className="size-10 rounded-full object-cover"
           src={comment.user.avatar}
           alt={`${comment.user.name}'s avatar`}
         />
@@ -154,7 +154,7 @@ const ReplyCards = ({ replies }: { replies: IComment[] }) => (
     {replies.map((reply) => (
       <div key={reply._id.toString()} className="flex gap-4 px-5 py-5">
         <Img
-          className="size-10 rounded-full"
+          className="size-10 rounded-full object-cover"
           src={reply.user.avatar}
           alt={`${reply.user.name}'s avatar`}
         />
