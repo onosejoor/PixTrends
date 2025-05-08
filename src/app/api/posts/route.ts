@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     const limitValue = Number(limit) || 10;
 
     const getPosts = await Post.aggregate([
-      { $sort: { createdAt: 1 } },
+      { $sort: { createdAt: -1 } },
       {
         $skip: (nextPage - 1) * limitValue,
       },
