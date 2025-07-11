@@ -72,7 +72,7 @@ export default function LikeSection({
         <span className="text-secondary -ml-2">{views}</span>
       </div>
       <button
-        onClick={() => copyToClipboard(link)}
+        onClick={async () => await copyToClipboard(link)}
         className="group hover:bg-accent/10 grid place-items-center rounded-full p-2"
       >
         <Share2 className="stroke-gray group-hover:stroke-accent size-5" />

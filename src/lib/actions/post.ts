@@ -10,7 +10,7 @@ export async function likePost(postId: string) {
 
   if (!isAuth) {
     redirect("/signin")
-    return { success: false, message: "login to continue" };
+    // return { success: false, message: "login to continue" };
   }
   try {
     const findPost = await Post.findById(postId);
@@ -32,7 +32,7 @@ export async function likePost(postId: string) {
     });
 
     if (!isLiked && !isUser) {
-      sendNotification({
+     await sendNotification({
         receiver: findPost.user._id.toString(),
         type: "like",
         postId: findPost.id,
@@ -56,7 +56,5 @@ export async function deletePost(postId: string) {
   } catch (error) {
     console.log("[POST_DELETE_ERROR]: ", error);
     return { success: false, message: "Error deleting post" };
-  } finally {
-    redirect("/");
   }
 }

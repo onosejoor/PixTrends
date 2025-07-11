@@ -175,7 +175,7 @@ export default function CreatePostForm({ user }: Props) {
         <div className="flex items-start gap-3">
           <Img
             src={user.avatar}
-            className="size-10 rounded-full"
+            className="size-10 object-cover rounded-full"
             alt={user.username}
             loading="lazy"
           />

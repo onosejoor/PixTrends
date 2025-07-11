@@ -1,3 +1,4 @@
+import { showToast } from "@/hooks/useToast";
 import clsx from "clsx";
 import { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -11,7 +12,11 @@ export function validateUsername(username: string) {
   return regex.test(username);
 }
 
-export const copyToClipboard = (link: string) => {
+export const copyToClipboard = async (link: string) => {
   const clipBoard = navigator.clipboard;
   clipBoard.writeText(link);
+  showToast({
+    variants: "success",
+    message: "Copied to clipboard",
+  });
 };
